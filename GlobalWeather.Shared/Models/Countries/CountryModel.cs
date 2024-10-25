@@ -18,7 +18,7 @@ public class CountryModel
 
     [JsonPropertyName("continents")] public string[] Continents { get; set; } = [];
 
-    [JsonPropertyName("flags")] public string[] Flags { get; set; } = [];
+    [JsonPropertyName("flags")] public Dictionary<string, string> Flags { get; set; } = [];
 
     [JsonPropertyName("capitalInfo")] public Dictionary<string, double[]> CapitalInfo { get; set; } = [];
 }

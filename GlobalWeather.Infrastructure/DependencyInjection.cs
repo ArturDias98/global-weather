@@ -16,7 +16,6 @@ public static class DependencyInjection
                 cfg.BaseAddress = new Uri(configuration.GetValue<string>("RestCountriesUrl")
                                           ?? throw new ArgumentException("Missing Rest Countries address")));
 
-        return services
-            .AddTransient<ICountryService, CountryService>();
+        return services;
     }
 }

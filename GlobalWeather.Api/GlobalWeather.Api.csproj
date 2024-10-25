@@ -15,4 +15,8 @@
     <None Remove="GlobalWeather.Api.http" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\GlobalWeather.Infrastructure\GlobalWeather.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

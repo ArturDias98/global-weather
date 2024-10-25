@@ -34,6 +34,25 @@ internal static class CountryExplorerEndpoints
         .Produces(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status404NotFound);
         
+        app.MapGet("api/v1/country/code/{code:int}", async (
+                [FromRoute] int code,
+                [FromServices] ICountryService service,
+                CancellationToken cancellationToken) =>
+            {
+                var result = await service.GetCountryByCodeAsync(
+                    code,
+                    cancellationToken);
+
+                return result.Success
+                    ? Results.Ok(result)
+                    : Results.NotFound();
+            })
+            .WithName("get-country-by-code")
+            .WithDescription("Returns country with a specific code")
+            .Produces<ResultModel<CountryModel>>()
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound);
+        
         return app;
     }
 }

@@ -30,11 +30,26 @@ internal sealed class CountryService(
         }
     }
 
-    public Task<ResultModel<CountryModel>> GetCountryByCodeAsync(
+    public async Task<ResultModel<CountryModel>> GetCountryByCodeAsync(
         int code,
         CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var result = await httpClient.GetFromJsonAsync<CountryModel[]>(
+                             $"alpha/{code}",
+                             cancellationToken)
+                         ?? [];
+
+            var first = result.First();
+
+            return ResultModel<CountryModel>.SuccessResult(first);
+        }
+        catch (Exception e)
+        {
+            logger.LogError("Error on get country with code {code}. Error: {message}", code, e.ToString());
+            return ResultModel<CountryModel>.ErrorResult("Could search country by Code");
+        }
     }
 
     public Task<ResultModel<List<CountryModel>>> GetFavoriteCountriesAsync(

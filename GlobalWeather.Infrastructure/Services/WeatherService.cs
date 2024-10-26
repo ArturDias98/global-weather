@@ -65,13 +65,6 @@ internal sealed class WeatherService(
         }
     }
 
-    public Task<ResultModel<List<CityModel>>> GetFavoriteCitiesAsync(
-        string userId,
-        CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
-    }
-
     public Task<ResultModel<string>> AddCityToFavoritesAsync(
         double latitude,
         double longitude,

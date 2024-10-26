@@ -13,10 +13,6 @@ public interface ICountryService
         int code,
         CancellationToken cancellationToken = default);
 
-    Task<ResultModel<List<CountryModel>>> GetFavoriteCountriesAsync(
-        string userId,
-        CancellationToken cancellationToken = default);
-
     Task<ResultModel<int>> AddCountryToFavoritesAsync(
         int code,
         string userId,

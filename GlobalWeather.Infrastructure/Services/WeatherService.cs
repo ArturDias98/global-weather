@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using GlobalWeather.Domain.Repositories;
 using GlobalWeather.Shared.Contracts;
 using GlobalWeather.Shared.Models;
 using GlobalWeather.Shared.Models.Weather;
@@ -9,6 +10,7 @@ namespace GlobalWeather.Infrastructure.Services;
 
 internal sealed class WeatherService(
     HttpClient httpClient,
+    IUserRepository userRepository,
     IConfiguration configuration,
     ILogger<WeatherService> logger) : IWeatherService
 {
@@ -65,18 +67,53 @@ internal sealed class WeatherService(
         }
     }
 
-    public Task<ResultModel<string>> AddCityToFavoritesAsync(
+    public async Task<ResultModel<string>> AddCityToFavoritesAsync(
+        string userId,
         double latitude,
         double longitude,
         CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var user = await userRepository.GetUserByIdAsync(userId, cancellationToken);
+            var id = user.AddCity(latitude, longitude);
+            
+            await userRepository.SaveUserAsync(user, cancellationToken);
+            
+            return ResultModel<string>.SuccessResult(id);
+        }
+        catch (Exception e)
+        {
+            logger.LogError("Error on add city {lat} - {lon} to user {id}. Error: {message}",
+                latitude,
+                longitude,
+                userId,
+                e.ToString());
+            return ResultModel<string>.ErrorResult("Could not add city to favorites");
+        }
     }
 
-    public Task<ResultModel<string>> RemoveCityFromFavoritesAsync(
+    public async Task<ResultModel<string>> RemoveCityFromFavoritesAsync(
+        string userId,
         string id,
         CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var user = await userRepository.GetUserByIdAsync(userId, cancellationToken);
+            user.RemoveCity(id);
+            
+            await userRepository.SaveUserAsync(user, cancellationToken);
+            
+            return ResultModel<string>.SuccessResult(id);
+        }
+        catch (Exception e)
+        {
+            logger.LogError("Error on remove city {id} to user {id}. Error: {message}",
+                id,
+                userId,
+                e.ToString());
+            return ResultModel<string>.ErrorResult("Could not remove city from favorites");
+        }
     }
 }

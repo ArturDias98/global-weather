@@ -39,7 +39,7 @@ public class User
         FavoriteCountries.Remove(code);
     }
 
-    public void AddCity(
+    public string AddCity(
         double latitude,
         double longitude)
     {
@@ -47,10 +47,13 @@ public class User
                 Math.Abs(i.Latitude - latitude) < COORDINATE_COMPARE_TOLERANCE &&
                 Math.Abs(i.Longitude - longitude) < COORDINATE_COMPARE_TOLERANCE))
         {
-            return;
+            return string.Empty;
         }
 
-        FavoriteCities.Add(FavoriteCity.Create(latitude, longitude));
+        var create = FavoriteCity.Create(latitude, longitude);
+        FavoriteCities.Add(create);
+
+        return create.Id;
     }
 
     public void RemoveCity(string id)

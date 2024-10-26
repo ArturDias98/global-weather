@@ -98,7 +98,7 @@ internal sealed class CountryService(
                 code, 
                 userId,
                 e.ToString());
-            return ResultModel<int>.ErrorResult("Could not remove country to favorites");
+            return ResultModel<int>.ErrorResult("Could not remove country from favorites");
         }
     }
 }

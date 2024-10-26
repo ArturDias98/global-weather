@@ -15,11 +15,13 @@ public interface IWeatherService
         CancellationToken cancellationToken = default);
 
     Task<ResultModel<string>> AddCityToFavoritesAsync(
+        string userId,
         double latitude,
         double longitude,
         CancellationToken cancellationToken = default);
 
     Task<ResultModel<string>> RemoveCityFromFavoritesAsync(
+        string userId,
         string id,
         CancellationToken cancellationToken = default);
 }

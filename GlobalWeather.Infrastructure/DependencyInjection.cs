@@ -1,3 +1,4 @@
+using Amazon.DynamoDBv2;
 using GlobalWeather.Infrastructure.Services;
 using GlobalWeather.Shared.Contracts;
 using Microsoft.Extensions.Configuration;
@@ -20,6 +21,12 @@ public static class DependencyInjection
             cfg.BaseAddress = new Uri(configuration.GetValue<string>("OpenWeatherUrl")
                                       ?? throw new ArgumentException("Missing OpenWeather address")));
 
-        return services;
+        var config = new AmazonDynamoDBConfig
+        {
+            ServiceURL = "http://localhost:8000"
+        };
+        
+        return services
+            .AddSingleton<IAmazonDynamoDB>(_ => new AmazonDynamoDBClient(config));
     }
 }

@@ -29,6 +29,7 @@ internal static class WeatherEndpoints
             })
             .WithName("get-cities-by-name")
             .WithDescription("Returns a list of cities filtered by name")
+            .WithTags("Weather")
             .Produces<ResultModel<List<CityModel>>>()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound);
@@ -50,6 +51,7 @@ internal static class WeatherEndpoints
             })
             .WithName("get-weather-information")
             .WithDescription("Returns weather information for specified city")
+            .WithTags("Weather")
             .Produces<ResultModel<WeatherModel>>()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound);

@@ -30,6 +30,7 @@ internal static class CountryExplorerEndpoints
         })
         .WithName("get-countries-by-region")
         .WithDescription("Returns a list of countries filtered by a region")
+        .WithTags("Country")
         .Produces<ResultModel<List<CountryModel>>>()
         .Produces(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status404NotFound);
@@ -49,6 +50,7 @@ internal static class CountryExplorerEndpoints
             })
             .WithName("get-country-by-code")
             .WithDescription("Returns country with a specific code")
+            .WithTags("Country")
             .Produces<ResultModel<CountryModel>>()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound);

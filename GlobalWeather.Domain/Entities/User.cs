@@ -2,9 +2,6 @@ namespace GlobalWeather.Domain.Entities;
 
 public class User
 {
-    public string Pk => Id;
-
-    public string Sk => Pk;
     public string Id { get; init; } = default!;
 
     public string Email { get; set; } = default!;

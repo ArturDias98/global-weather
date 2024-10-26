@@ -10,8 +10,13 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    var dbHelper = app.Services.GetRequiredService<DatabaseHelper>();
+    await dbHelper.CreateTablesAsync(new CancellationTokenSource(10000).Token);
+}
 
+// Configure the HTTP request pipeline.
 app.UseHttpsRedirection();
 
 app.MapCountryEndpoints()

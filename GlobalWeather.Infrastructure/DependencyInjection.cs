@@ -16,6 +16,10 @@ public static class DependencyInjection
                 cfg.BaseAddress = new Uri(configuration.GetValue<string>("RestCountriesUrl")
                                           ?? throw new ArgumentException("Missing Rest Countries address")));
 
+        services.AddHttpClient<IWeatherService, WeatherService>(cfg =>
+            cfg.BaseAddress = new Uri(configuration.GetValue<string>("OpenWeatherUrl")
+                                      ?? throw new ArgumentException("Missing OpenWeather address")));
+
         return services;
     }
 }

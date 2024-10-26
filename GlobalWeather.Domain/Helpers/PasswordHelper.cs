@@ -3,7 +3,7 @@ using System.Text;
 
 namespace GlobalWeather.Domain.Helpers;
 
-internal static class PasswordHelper
+public static class PasswordHelper
 {
     public static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
     {

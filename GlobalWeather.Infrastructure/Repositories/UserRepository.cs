@@ -8,9 +8,29 @@ namespace GlobalWeather.Infrastructure.Repositories;
 
 internal sealed class UserRepository(IDynamoDBContext context) : IUserRepository
 {
+    public async Task<bool> IsEmailUniqueAsync(string email, CancellationToken cancellationToken = default)
+    {
+        //TODO: Improve this query
+        var users = await context
+            .ScanAsync<User>(new List<ScanCondition>())
+            .GetRemainingAsync(cancellationToken);
+        
+        return users.All(i => i.Email != email);
+    }
+
     public Task<User> GetUserByIdAsync(string userId, CancellationToken cancellationToken = default)
     {
         return context.LoadAsync<User>(userId, cancellationToken);
+    }
+
+    public async Task<User> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default)
+    {
+        //TODO: Improve this query
+        var users = await context
+            .ScanAsync<User>(new List<ScanCondition>())
+            .GetRemainingAsync(cancellationToken);
+        
+        return users.First(i => i.Email == email);
     }
 
     public Task DeleteUserAsync(string id, CancellationToken cancellationToken = default)

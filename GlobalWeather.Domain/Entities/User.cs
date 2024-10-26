@@ -15,6 +15,8 @@ public class User
 
     public List<int> FavoriteCountries { get; set; } = [];
 
+    public List<FavoriteCity> FavoriteCities { get; set; } = [];
+
     public void Update(string email)
     {
         Email = email.Trim();
@@ -51,4 +53,20 @@ public class User
             PasswordSalt = passwordSalt
         };
     }
+}
+
+public class FavoriteCity
+{
+    public string Id { get; set; } = default!;
+    public double Latitude { get; set; }
+    public double Longitude { get; set; }
+
+    public static FavoriteCity Create(
+        double latitude,
+        double longitude) => new()
+    {
+        Id = Guid.NewGuid().ToString(),
+        Latitude = latitude,
+        Longitude = longitude
+    };
 }

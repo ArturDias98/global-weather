@@ -14,7 +14,8 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 
-app.MapCountryEndpoints();
+app.MapCountryEndpoints()
+    .MapWeatherEndpoints();
 
 app.UseSwagger();
 app.UseSwaggerUI();

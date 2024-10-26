@@ -35,7 +35,8 @@ public static class DependencyInjection
 
         return services
             .AddSingleton<IAmazonDynamoDB>(dynamoDbClient)
-            .AddSingleton<IDynamoDBContext>(new DynamoDBContext(dynamoDbClient))
+            .AddSingleton<IDynamoDBContext>(new DynamoDBContext(dynamoDbClient,
+                new DynamoDBContextConfig { Conversion = DynamoDBEntryConversion.V2 }))
             .AddTransient<DatabaseHelper>()
             .AddTransient<IUserRepository, UserRepository>()
             .AddTransient<IUserService, UserService>();

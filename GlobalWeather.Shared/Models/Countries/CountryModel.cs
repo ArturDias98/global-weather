@@ -4,6 +4,7 @@ namespace GlobalWeather.Shared.Models.Countries;
 
 public class CountryModel
 {
+    [JsonPropertyName("ccn3")] public int Code { get; set; }
     [JsonPropertyName("name")] public CountryName Name { get; set; } = new();
 
     [JsonPropertyName("capital")] public string[] Capital { get; set; } = [];

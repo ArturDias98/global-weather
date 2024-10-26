@@ -10,31 +10,33 @@ internal static class CountryExplorerEndpoints
     public static WebApplication MapCountryEndpoints(this WebApplication app)
     {
         return app
-            .MapGetEndpoints();
+            .MapGetEndpoints()
+            .MapPutEndpoints()
+            .MapDeleteEndpoints();
     }
 
     private static WebApplication MapGetEndpoints(this WebApplication app)
     {
         app.MapGet("api/v1/country/region/{region}", async (
-            [FromRoute] string region,
-            [FromServices] ICountryService service,
-            CancellationToken cancellationToken) =>
-        {
-            var result = await service.GetCountriesByRegionAsync(
-                region,
-                cancellationToken);
+                [FromRoute] string region,
+                [FromServices] ICountryService service,
+                CancellationToken cancellationToken) =>
+            {
+                var result = await service.GetCountriesByRegionAsync(
+                    region,
+                    cancellationToken);
 
-            return result.Success
-                ? Results.Ok(result)
-                : Results.NotFound();
-        })
-        .WithName("get-countries-by-region")
-        .WithDescription("Returns a list of countries filtered by a region")
-        .WithTags("Country")
-        .Produces<ResultModel<List<CountryModel>>>()
-        .Produces(StatusCodes.Status200OK)
-        .Produces(StatusCodes.Status404NotFound);
-        
+                return result.Success
+                    ? Results.Ok(result)
+                    : Results.NotFound(result);
+            })
+            .WithName("get-countries-by-region")
+            .WithDescription("Returns a list of countries filtered by a region")
+            .WithTags("Country")
+            .Produces<ResultModel<List<CountryModel>>>()
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound);
+
         app.MapGet("api/v1/country/code/{code:int}", async (
                 [FromRoute] int code,
                 [FromServices] ICountryService service,
@@ -46,7 +48,7 @@ internal static class CountryExplorerEndpoints
 
                 return result.Success
                     ? Results.Ok(result)
-                    : Results.NotFound();
+                    : Results.NotFound(result);
             })
             .WithName("get-country-by-code")
             .WithDescription("Returns country with a specific code")
@@ -54,7 +56,61 @@ internal static class CountryExplorerEndpoints
             .Produces<ResultModel<CountryModel>>()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound);
-        
+
+        return app;
+    }
+
+    private static WebApplication MapPutEndpoints(this WebApplication app)
+    {
+        app.MapPut("api/v1/country/{userId}/{code:int}", async (
+                [FromRoute(Name = "userId")] string userId,
+                [FromRoute(Name = "code")] int code,
+                [FromServices] ICountryService service,
+                CancellationToken cancellationToken) =>
+            {
+                var result = await service.AddCountryToFavoritesAsync(
+                    code,
+                    userId,
+                    cancellationToken);
+
+                return result.Success
+                    ? Results.Ok(result)
+                    : Results.BadRequest(result);
+            })
+            .WithName("add-country-to-user-favorites")
+            .WithDescription("Add country to user favorites and return country code")
+            .WithTags("Country")
+            .Produces<ResultModel<int>>()
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest);
+
+        return app;
+    }
+
+    private static WebApplication MapDeleteEndpoints(this WebApplication app)
+    {
+        app.MapDelete("api/v1/country/{userId}/{code:int}", async (
+                [FromRoute(Name = "userId")] string userId,
+                [FromRoute(Name = "code")] int code,
+                [FromServices] ICountryService service,
+                CancellationToken cancellationToken) =>
+            {
+                var result = await service.RemoveCountryFromFavoritesAsync(
+                    code,
+                    userId,
+                    cancellationToken);
+
+                return result.Success
+                    ? Results.Ok(result)
+                    : Results.BadRequest(result);
+            })
+            .WithName("remove-country-from-user-favorites")
+            .WithDescription("Remove country from user favorites and return country code")
+            .WithTags("Country")
+            .Produces<ResultModel<int>>()
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest);
+
         return app;
     }
 }

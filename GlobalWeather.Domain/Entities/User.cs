@@ -5,7 +5,7 @@ namespace GlobalWeather.Domain.Entities;
 [DynamoDBTable("User")]
 public class User
 {
-    private const double COORDINATE_COMPARE_TOLERANCE = 0.001;
+    private const double CoordinateCompareTolerance = 0.001;
 
     [DynamoDBHashKey] public string Id { get; init; } = default!;
 
@@ -15,9 +15,11 @@ public class User
 
     [DynamoDBProperty] public byte[] PasswordSalt { get; private set; } = [];
 
-    [DynamoDBProperty] public List<int> FavoriteCountries { get; set; } = [];
+    [DynamoDBProperty("FavoriteCountries")]
+    public List<int> FavoriteCountries { get; set; } = [];
 
-    [DynamoDBProperty] public List<FavoriteCity> FavoriteCities { get; set; } = [];
+    [DynamoDBProperty("FavoriteCities")] 
+    public List<FavoriteCity> FavoriteCities { get; set; } = [];
 
     public void Update(string email)
     {
@@ -44,8 +46,8 @@ public class User
         double longitude)
     {
         if (FavoriteCities.Any(i =>
-                Math.Abs(i.Latitude - latitude) < COORDINATE_COMPARE_TOLERANCE &&
-                Math.Abs(i.Longitude - longitude) < COORDINATE_COMPARE_TOLERANCE))
+                Math.Abs(i.Latitude - latitude) < CoordinateCompareTolerance &&
+                Math.Abs(i.Longitude - longitude) < CoordinateCompareTolerance))
         {
             return string.Empty;
         }

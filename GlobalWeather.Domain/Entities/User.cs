@@ -1,18 +1,21 @@
+using Amazon.DynamoDBv2.DataModel;
+
 namespace GlobalWeather.Domain.Entities;
 
+[DynamoDBTable("User")]
 public class User
 {
-    public string Id { get; init; } = default!;
+    [DynamoDBHashKey] public string Id { get; init; } = default!;
 
-    public string Email { get; set; } = default!;
+    [DynamoDBProperty] public string Email { get; set; } = default!;
 
-    public byte[] PasswordHash { get; private set; } = [];
+    [DynamoDBProperty] public byte[] PasswordHash { get; private set; } = [];
 
-    public byte[] PasswordSalt { get; private set; } = [];
+    [DynamoDBProperty] public byte[] PasswordSalt { get; private set; } = [];
 
-    public List<int> FavoriteCountries { get; set; } = [];
+    [DynamoDBProperty] public List<int> FavoriteCountries { get; set; } = [];
 
-    public List<FavoriteCity> FavoriteCities { get; set; } = [];
+    [DynamoDBProperty] public List<FavoriteCity> FavoriteCities { get; set; } = [];
 
     public void Update(string email)
     {

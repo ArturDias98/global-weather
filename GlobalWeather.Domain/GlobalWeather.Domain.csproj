@@ -10,4 +10,8 @@
       <Compile Remove="Class1.cs" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.402.4" />
+    </ItemGroup>
+
 </Project>

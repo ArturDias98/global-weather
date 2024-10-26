@@ -9,6 +9,7 @@
     <ItemGroup>
       <Compile Remove="Class1.cs" />
       <Compile Remove="Database\IDynamoDbClient.cs" />
+      <Compile Remove="Database\**" />
     </ItemGroup>
 
     <ItemGroup>
@@ -17,12 +18,16 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="AWSSDK.DynamoDBv2" Version="4.0.0-preview.4" />
+      <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.402.4" />
       <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Database\" />
+      <EmbeddedResource Remove="Database\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Database\**" />
     </ItemGroup>
 
 </Project>

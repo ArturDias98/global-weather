@@ -37,12 +37,32 @@ internal sealed class WeatherService(
         }
     }
 
-    public Task<ResultModel<WeatherModel>> GetWeatherInformationAsync(
+    public async Task<ResultModel<WeatherModel>> GetWeatherInformationAsync(
         double latitude,
         double longitude,
         CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var apiKey = configuration.GetValue<string>("OpenWeatherMapApiKey")
+                         ?? throw new Exception("Could not resolve OpenWeatherMapApiKey");
+
+            var result = await httpClient.GetFromJsonAsync<WeatherModel>(
+                $"data/2.5/weather?lat={latitude}&lon={longitude}&appid={apiKey}",
+                cancellationToken) ?? new WeatherModel();
+
+            return ResultModel<WeatherModel>.SuccessResult(result);
+        }
+        catch (Exception e)
+        {
+            logger.LogError(
+                "Error on get weather information for coordinates lat={latitude}, lon={longitude}. Error: {error}",
+                latitude,
+                longitude,
+                e.ToString());
+            
+            return ResultModel<WeatherModel>.ErrorResult("Could not get weather data");
+        }
     }
 
     public Task<ResultModel<List<CityModel>>> GetFavoriteCitiesAsync(

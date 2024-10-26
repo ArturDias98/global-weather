@@ -1,5 +1,8 @@
 using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DataModel;
 using Amazon.Runtime;
+using GlobalWeather.Domain.Repositories;
+using GlobalWeather.Infrastructure.Repositories;
 using GlobalWeather.Infrastructure.Services;
 using GlobalWeather.Shared.Contracts;
 using Microsoft.Extensions.Configuration;
@@ -26,10 +29,15 @@ public static class DependencyInjection
         {
             ServiceURL = "http://localhost:8000"
         };
+
         var credentials = new BasicAWSCredentials("myAccessKeyId", "secretAccessKey");
+        var dynamoDbClient = new AmazonDynamoDBClient(credentials, config);
 
         return services
-            .AddSingleton<IAmazonDynamoDB>(_ => new AmazonDynamoDBClient(credentials, config))
-            .AddTransient<DatabaseHelper>();
+            .AddSingleton<IAmazonDynamoDB>(dynamoDbClient)
+            .AddSingleton<IDynamoDBContext>(new DynamoDBContext(dynamoDbClient))
+            .AddTransient<DatabaseHelper>()
+            .AddTransient<IUserRepository, UserRepository>()
+            .AddTransient<IUserService, UserService>();
     }
 }

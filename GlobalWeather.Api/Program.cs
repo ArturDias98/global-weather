@@ -1,10 +1,13 @@
+using GlobalWeather.Api;
 using GlobalWeather.Api.Extensions;
 using GlobalWeather.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services
+    .AddApiServices()
+    .AddInfrastructure(builder.Configuration);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -20,7 +23,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.MapCountryEndpoints()
-    .MapWeatherEndpoints();
+    .MapWeatherEndpoints()
+    .MapUserEndpoints();
 
 app.UseSwagger();
 app.UseSwaggerUI();

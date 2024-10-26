@@ -9,17 +9,18 @@ internal sealed class TokenService(
     IConfiguration configuration,
     ILogger<TokenService> logger)
 {
-    private static ClaimsIdentity GenerateClaims(string userId)
+    private static ClaimsIdentity GenerateClaims(string userId, string email)
     {
         var claims = new List<Claim>()
         {
-            new("Id", userId)
+            new("Id", userId),
+            new(ClaimTypes.Email, email)
         };
 
         return new ClaimsIdentity(claims);
     }
 
-    public string CreateToken(string userId)
+    public string CreateToken(string userId, string email)
     {
         try
         {
@@ -37,7 +38,7 @@ internal sealed class TokenService(
             {
                 SigningCredentials = credentials,
                 Expires = DateTime.UtcNow.AddHours(8),
-                Subject = GenerateClaims(userId)
+                Subject = GenerateClaims(userId, email)
             };
 
             var token = handler.CreateToken(tokenDescriptor);

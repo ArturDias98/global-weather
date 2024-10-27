@@ -31,4 +31,4 @@ jobs:
       run: dotnet test --no-build --verbosity normal
     - name: Deploy to Lambda
       working-directory: ./
-      run: dotnet lambda deploy-serverless --region us-east-1 --s3-bucket ${{ secrets.BUCKET }} --function-name GlobalWeatherApi
+      run: dotnet lambda deploy-serverless --region us-east-1 --s3-bucket globalweatherbucket --function-name GlobalWeatherApi

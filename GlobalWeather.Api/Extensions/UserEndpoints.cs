@@ -57,7 +57,7 @@ internal static class UserEndpoints
 
     private static WebApplication MapPostEndpoints(this WebApplication app)
     {
-        app.MapPost("api/v1/user", async (
+        app.MapPost("api/v1/user/create", async (
                 [FromBody] CreateUserModel model,
                 [FromServices] IUserService service,
                 [FromServices] TokenService tokenService,
@@ -77,6 +77,31 @@ internal static class UserEndpoints
             })
             .WithName("create-user")
             .WithDescription("Create user and return Jwt Token for authentication")
+            .WithTags("User")
+            .Produces<ResultModel<string>>()
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest);
+        
+        app.MapPost("api/v1/user/login", async (
+                [FromBody] LoginModel model,
+                [FromServices] IUserService service,
+                [FromServices] TokenService tokenService,
+                CancellationToken cancellationToken) =>
+            {
+                var email = model.Email.Trim();
+                var result = await service.LoginAsync(
+                    email,
+                    model.Password.Trim(),
+                    cancellationToken);
+
+                if (!result.Success) return Results.BadRequest(result);
+
+                var token = tokenService.CreateToken(result.Result!, email);
+
+                return Results.Ok(ResultModel<string>.SuccessResult(token));
+            })
+            .WithName("login")
+            .WithDescription("Execute user authentication and return Jwt Token")
             .WithTags("User")
             .Produces<ResultModel<string>>()
             .Produces(StatusCodes.Status200OK)

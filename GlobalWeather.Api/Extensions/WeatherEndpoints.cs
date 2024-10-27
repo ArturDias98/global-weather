@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using GlobalWeather.Shared.Contracts;
 using GlobalWeather.Shared.Models;
 using GlobalWeather.Shared.Models.Weather;
@@ -68,8 +69,16 @@ internal static class WeatherEndpoints
                 [FromRoute] string userId,
                 [FromBody] AddWeatherModel model,
                 [FromServices] IWeatherService service,
+                ClaimsPrincipal claims,
                 CancellationToken cancellationToken) =>
             {
+                var id = claims!.FindFirst(i => i.Type == "Id")!.Value;
+                
+                if (id != userId)
+                {
+                    return Results.Unauthorized();
+                }
+                
                 var result = await service.AddCityToFavoritesAsync(
                     userId,
                     model.Latitude,
@@ -80,6 +89,7 @@ internal static class WeatherEndpoints
                     ? Results.Ok(result)
                     : Results.NotFound(result);
             })
+            .RequireAuthorization()
             .WithName("add-city-to-user-favorites")
             .WithDescription("Add city to user favorites and return city identifier")
             .WithTags("Weather")
@@ -96,8 +106,16 @@ internal static class WeatherEndpoints
                 [FromRoute(Name = "userId")] string userId,
                 [FromRoute(Name = "cityId")] string cityId,
                 [FromServices] IWeatherService service,
+                ClaimsPrincipal claims,
                 CancellationToken cancellationToken) =>
             {
+                var id = claims!.FindFirst(i => i.Type == "Id")!.Value;
+                
+                if (id != userId)
+                {
+                    return Results.Unauthorized();
+                }
+                
                 var result = await service.RemoveCityFromFavoritesAsync(
                     userId,
                     cityId,
@@ -107,6 +125,7 @@ internal static class WeatherEndpoints
                     ? Results.Ok(result)
                     : Results.NotFound(result);
             })
+            .RequireAuthorization()
             .WithName("remove-city-from-user-favorites")
             .WithDescription("Remove city from user favorites and return city identifier")
             .WithTags("Weather")

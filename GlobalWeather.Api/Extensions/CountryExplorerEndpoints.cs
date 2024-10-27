@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using GlobalWeather.Shared.Contracts;
 using GlobalWeather.Shared.Models;
 using GlobalWeather.Shared.Models.Countries;
@@ -66,8 +67,16 @@ internal static class CountryExplorerEndpoints
                 [FromRoute(Name = "userId")] string userId,
                 [FromRoute(Name = "code")] int code,
                 [FromServices] ICountryService service,
+                ClaimsPrincipal claims,
                 CancellationToken cancellationToken) =>
             {
+                var id = claims!.FindFirst(i => i.Type == "Id")!.Value;
+                
+                if (id != userId)
+                {
+                    return Results.Unauthorized();
+                }
+                
                 var result = await service.AddCountryToFavoritesAsync(
                     code,
                     userId,
@@ -77,6 +86,7 @@ internal static class CountryExplorerEndpoints
                     ? Results.Ok(result)
                     : Results.BadRequest(result);
             })
+            .RequireAuthorization()
             .WithName("add-country-to-user-favorites")
             .WithDescription("Add country to user favorites and return country code")
             .WithTags("Country")
@@ -93,8 +103,16 @@ internal static class CountryExplorerEndpoints
                 [FromRoute(Name = "userId")] string userId,
                 [FromRoute(Name = "code")] int code,
                 [FromServices] ICountryService service,
+                ClaimsPrincipal claims,
                 CancellationToken cancellationToken) =>
             {
+                var id = claims!.FindFirst(i => i.Type == "Id")!.Value;
+                
+                if (id != userId)
+                {
+                    return Results.Unauthorized();
+                }
+                
                 var result = await service.RemoveCountryFromFavoritesAsync(
                     code,
                     userId,
@@ -104,6 +122,7 @@ internal static class CountryExplorerEndpoints
                     ? Results.Ok(result)
                     : Results.BadRequest(result);
             })
+            .RequireAuthorization()
             .WithName("remove-country-from-user-favorites")
             .WithDescription("Remove country from user favorites and return country code")
             .WithTags("Country")

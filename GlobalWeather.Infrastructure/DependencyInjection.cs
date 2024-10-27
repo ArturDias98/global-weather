@@ -2,6 +2,7 @@ using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.Runtime;
 using GlobalWeather.Domain.Repositories;
+using GlobalWeather.Infrastructure.Options;
 using GlobalWeather.Infrastructure.Repositories;
 using GlobalWeather.Infrastructure.Services;
 using GlobalWeather.Shared.Contracts;
@@ -16,6 +17,17 @@ public static class DependencyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.ConfigureHttpClient(configuration);
+        
+        return services
+            .ConfigureDbContext(configuration)
+            .AddTransient<DatabaseHelper>()
+            .AddTransient<IUserRepository, UserRepository>()
+            .AddTransient<IUserService, UserService>();
+    }
+
+    private static void ConfigureHttpClient(this IServiceCollection services, IConfiguration configuration)
+    {
         services
             .AddHttpClient<ICountryService, CountryService>(cfg =>
                 cfg.BaseAddress = new Uri(configuration.GetValue<string>("RestCountriesUrl")
@@ -24,21 +36,27 @@ public static class DependencyInjection
         services.AddHttpClient<IWeatherService, WeatherService>(cfg =>
             cfg.BaseAddress = new Uri(configuration.GetValue<string>("OpenWeatherUrl")
                                       ?? throw new ArgumentException("Missing OpenWeather address")));
+    }
+
+    private static IServiceCollection ConfigureDbContext(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        var options = new AwsDbOptions();
+        configuration.Bind(AwsDbOptions.Position, options);
 
         var config = new AmazonDynamoDBConfig
         {
-            ServiceURL = "http://localhost:8000"
+            ServiceURL = options.ServiceUrl,
         };
 
-        var credentials = new BasicAWSCredentials("myAccessKeyId", "secretAccessKey");
+        var credentials = new BasicAWSCredentials(options.AccessKey, options.SecretKey);
         var dynamoDbClient = new AmazonDynamoDBClient(credentials, config);
 
         return services
             .AddSingleton<IAmazonDynamoDB>(dynamoDbClient)
-            .AddSingleton<IDynamoDBContext>(new DynamoDBContext(dynamoDbClient,
-                new DynamoDBContextConfig { Conversion = DynamoDBEntryConversion.V2 }))
-            .AddTransient<DatabaseHelper>()
-            .AddTransient<IUserRepository, UserRepository>()
-            .AddTransient<IUserService, UserService>();
+            .AddSingleton<IDynamoDBContext>(new DynamoDBContext(
+                dynamoDbClient,
+                new DynamoDBContextConfig { Conversion = DynamoDBEntryConversion.V2 }));
     }
 }

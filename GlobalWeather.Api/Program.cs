@@ -49,6 +49,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapGet("api/v1/health", () => Results.Ok("Healthy"));
 app.MapCountryEndpoints()
     .MapWeatherEndpoints()
     .MapUserEndpoints();

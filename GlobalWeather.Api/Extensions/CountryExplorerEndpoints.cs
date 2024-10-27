@@ -63,8 +63,7 @@ internal static class CountryExplorerEndpoints
 
     private static WebApplication MapPutEndpoints(this WebApplication app)
     {
-        app.MapPut("api/v1/country/{userId}/{code:int}", async (
-                [FromRoute(Name = "userId")] string userId,
+        app.MapPut("api/v1/country/{code:int}", async (
                 [FromRoute(Name = "code")] int code,
                 [FromServices] ICountryService service,
                 ClaimsPrincipal claims,
@@ -72,14 +71,9 @@ internal static class CountryExplorerEndpoints
             {
                 var id = claims!.FindFirst(i => i.Type == "Id")!.Value;
                 
-                if (id != userId)
-                {
-                    return Results.Unauthorized();
-                }
-                
                 var result = await service.AddCountryToFavoritesAsync(
                     code,
-                    userId,
+                    id,
                     cancellationToken);
 
                 return result.Success
@@ -88,7 +82,7 @@ internal static class CountryExplorerEndpoints
             })
             .RequireAuthorization()
             .WithName("add-country-to-user-favorites")
-            .WithDescription("Add country to user favorites and return country code")
+            .WithDescription("Add country to user favorites and return country code.")
             .WithTags("Country")
             .Produces<ResultModel<int>>()
             .Produces(StatusCodes.Status200OK)
@@ -99,8 +93,7 @@ internal static class CountryExplorerEndpoints
 
     private static WebApplication MapDeleteEndpoints(this WebApplication app)
     {
-        app.MapDelete("api/v1/country/{userId}/{code:int}", async (
-                [FromRoute(Name = "userId")] string userId,
+        app.MapDelete("api/v1/country/{code:int}", async (
                 [FromRoute(Name = "code")] int code,
                 [FromServices] ICountryService service,
                 ClaimsPrincipal claims,
@@ -108,14 +101,9 @@ internal static class CountryExplorerEndpoints
             {
                 var id = claims!.FindFirst(i => i.Type == "Id")!.Value;
                 
-                if (id != userId)
-                {
-                    return Results.Unauthorized();
-                }
-                
                 var result = await service.RemoveCountryFromFavoritesAsync(
                     code,
-                    userId,
+                    id,
                     cancellationToken);
 
                 return result.Success

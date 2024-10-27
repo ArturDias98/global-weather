@@ -9,6 +9,7 @@
     <ItemGroup>
       <Compile Remove="Class1.cs" />
       <Compile Remove="Models\Countries\Base\**" />
+      <Compile Remove="Models\Countries\AddCountryModel.cs" />
     </ItemGroup>
 
     <ItemGroup>

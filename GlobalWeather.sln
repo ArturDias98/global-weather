@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlobalWeather.Infrastructur
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlobalWeather.Shared", "GlobalWeather.Shared\GlobalWeather.Shared.csproj", "{C8CE4753-401F-433D-B453-149E0CAB3AE1}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{D7A5AD00-389D-4518-BF28-083F7438843E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlobalWeather.Integration.Tests", "GlobalWeather.Integration.Tests\GlobalWeather.Integration.Tests.csproj", "{38E24301-1CB4-4C87-9F39-0EE602870B5A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +39,10 @@ Global
 		{C8CE4753-401F-433D-B453-149E0CAB3AE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8CE4753-401F-433D-B453-149E0CAB3AE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8CE4753-401F-433D-B453-149E0CAB3AE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38E24301-1CB4-4C87-9F39-0EE602870B5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38E24301-1CB4-4C87-9F39-0EE602870B5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38E24301-1CB4-4C87-9F39-0EE602870B5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38E24301-1CB4-4C87-9F39-0EE602870B5A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -46,5 +54,6 @@ Global
 		{02D5EDCC-EF11-4273-B385-3E36E98BF93F} = {622A5A86-72D4-43F2-89D1-238F80B1AD06}
 		{4372A202-5CBA-4748-8F5F-4F1958788EF6} = {622A5A86-72D4-43F2-89D1-238F80B1AD06}
 		{C8CE4753-401F-433D-B453-149E0CAB3AE1} = {622A5A86-72D4-43F2-89D1-238F80B1AD06}
+		{38E24301-1CB4-4C87-9F39-0EE602870B5A} = {D7A5AD00-389D-4518-BF28-083F7438843E}
 	EndGlobalSection
 EndGlobal

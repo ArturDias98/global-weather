@@ -41,7 +41,7 @@ internal static class UserEndpoints
                     };
                     return Results.Ok(ResultModel<UserModel>.SuccessResult(parse));
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     return Results.NotFound(ResultModel<UserModel>.ErrorResult("User not found"));
                 }

@@ -65,8 +65,7 @@ internal static class WeatherEndpoints
 
     private static WebApplication MapPutEndpoints(this WebApplication app)
     {
-        app.MapPut("api/v1/weather/{userId}", async (
-                [FromRoute] string userId,
+        app.MapPut("api/v1/weather", async (
                 [FromBody] AddWeatherModel model,
                 [FromServices] IWeatherService service,
                 ClaimsPrincipal claims,
@@ -74,13 +73,8 @@ internal static class WeatherEndpoints
             {
                 var id = claims!.FindFirst(i => i.Type == "Id")!.Value;
                 
-                if (id != userId)
-                {
-                    return Results.Unauthorized();
-                }
-                
                 var result = await service.AddCityToFavoritesAsync(
-                    userId,
+                    id,
                     model.Latitude,
                     model.Longitude,
                     cancellationToken);
@@ -102,8 +96,7 @@ internal static class WeatherEndpoints
 
     private static WebApplication MapDeleteEndpoints(this WebApplication app)
     {
-        app.MapDelete("api/v1/weather/{userId}/{cityId}", async (
-                [FromRoute(Name = "userId")] string userId,
+        app.MapDelete("api/v1/weather/{cityId}", async (
                 [FromRoute(Name = "cityId")] string cityId,
                 [FromServices] IWeatherService service,
                 ClaimsPrincipal claims,
@@ -111,13 +104,8 @@ internal static class WeatherEndpoints
             {
                 var id = claims!.FindFirst(i => i.Type == "Id")!.Value;
                 
-                if (id != userId)
-                {
-                    return Results.Unauthorized();
-                }
-                
                 var result = await service.RemoveCityFromFavoritesAsync(
-                    userId,
+                    id,
                     cityId,
                     cancellationToken);
 

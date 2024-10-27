@@ -19,7 +19,9 @@ internal static class TestDatabaseHelper
     public static async Task<User> CreateUserAsync(
         string email,
         string password,
-        WebApplicationFactory factory)
+        WebApplicationFactory factory,
+        List<int>? favoriteCountries = null,
+        List<FavoriteCity>? favoriteCities = null)
     {
         PasswordHelper.CreatePasswordHash(
             password,
@@ -30,6 +32,9 @@ internal static class TestDatabaseHelper
             email,
             hash,
             salt);
+        
+        user.FavoriteCountries = favoriteCountries ?? [];
+        user.FavoriteCities = favoriteCities ?? [];
 
         var repository = factory.Services.GetRequiredService<IUserRepository>();
         await repository.SaveUserAsync(user);

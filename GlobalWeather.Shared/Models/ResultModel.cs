@@ -2,7 +2,7 @@ namespace GlobalWeather.Shared.Models;
 
 public class ResultModel<T>
 {
-    public bool Success { get; private init; }
+    public bool Success { get; set; }
     public string? ErrorMessage { get; set; }
     public List<string> Errors { get; set; } = [];
     public T? Result { get; set; }

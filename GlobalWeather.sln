@@ -3,21 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlobalWeather.Api", "GlobalWeather.Api\GlobalWeather.Api.csproj", "{69FBCC92-1A7B-4CC3-959C-9E6A8776005E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlobalWeather.Api", "GlobalWeather.Api\GlobalWeather.Api.csproj", "{69FBCC92-1A7B-4CC3-959C-9E6A8776005E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{622A5A86-72D4-43F2-89D1-238F80B1AD06}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlobalWeather.Domain", "GlobalWeather.Domain\GlobalWeather.Domain.csproj", "{02D5EDCC-EF11-4273-B385-3E36E98BF93F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlobalWeather.Domain", "GlobalWeather.Domain\GlobalWeather.Domain.csproj", "{02D5EDCC-EF11-4273-B385-3E36E98BF93F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlobalWeather.Infrastructure", "GlobalWeather.Infrastructure\GlobalWeather.Infrastructure.csproj", "{4372A202-5CBA-4748-8F5F-4F1958788EF6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlobalWeather.Infrastructure", "GlobalWeather.Infrastructure\GlobalWeather.Infrastructure.csproj", "{4372A202-5CBA-4748-8F5F-4F1958788EF6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlobalWeather.Shared", "GlobalWeather.Shared\GlobalWeather.Shared.csproj", "{C8CE4753-401F-433D-B453-149E0CAB3AE1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlobalWeather.Shared", "GlobalWeather.Shared\GlobalWeather.Shared.csproj", "{C8CE4753-401F-433D-B453-149E0CAB3AE1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{D7A5AD00-389D-4518-BF28-083F7438843E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlobalWeather.Integration.Tests", "GlobalWeather.Integration.Tests\GlobalWeather.Integration.Tests.csproj", "{38E24301-1CB4-4C87-9F39-0EE602870B5A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlobalWeather.Integration.Tests", "GlobalWeather.Integration.Tests\GlobalWeather.Integration.Tests.csproj", "{38E24301-1CB4-4C87-9F39-0EE602870B5A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlobalWeather.Client", "GlobalWeather.Client\GlobalWeather.Client.csproj", "{65CAD70E-1B84-45D0-8C7F-5F792EBC3EF8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlobalWeather.Client", "GlobalWeather.Client\GlobalWeather.Client.csproj", "{65CAD70E-1B84-45D0-8C7F-5F792EBC3EF8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,13 +53,13 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {C1CF7128-10E0-49D2-B301-659802341A66}
-	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{02D5EDCC-EF11-4273-B385-3E36E98BF93F} = {622A5A86-72D4-43F2-89D1-238F80B1AD06}
 		{4372A202-5CBA-4748-8F5F-4F1958788EF6} = {622A5A86-72D4-43F2-89D1-238F80B1AD06}
 		{C8CE4753-401F-433D-B453-149E0CAB3AE1} = {622A5A86-72D4-43F2-89D1-238F80B1AD06}
 		{38E24301-1CB4-4C87-9F39-0EE602870B5A} = {D7A5AD00-389D-4518-BF28-083F7438843E}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C1CF7128-10E0-49D2-B301-659802341A66}
 	EndGlobalSection
 EndGlobal

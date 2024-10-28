@@ -2,38 +2,41 @@
 <MudDialog>
     <DialogContent>
         <MudStack Row="true"
-                  Wrap="Wrap.Wrap">
+                  Wrap="Wrap.Wrap"
+                  Justify="Justify.Center">
             <MudImage Src="@GetCountryImage(Model)"
                       Class="rounded-lg"
-                      Height="100"
-                      Width="100"
+                      Height="150"
+                      Width="150"
                       ObjectFit="ObjectFit.Cover">
             </MudImage>
-            <MudStack>
-                <MudText Typo="Typo.h5">
-                    @Model.Name.CommonName
-                </MudText>
-                <MudText Typo="Typo.subtitle2">@Model.Name.Official</MudText>
-                <MudText Typo="Typo.h6">Região: @Model.Region</MudText>
-                <MudText Typo="Typo.h6">Capital: @Model.Capital.First()</MudText>
-                <MudText Typo="Typo.h6">População: @Model.Population</MudText>
-                <MudText Typo="Typo.h6">Línguas</MudText>
-                <MudStack Row="true"
-                          Wrap="Wrap.Wrap">
-                    @foreach (var lang in Model.Languages)
-                    {
-                        <MudChip T="string">@lang.Value</MudChip>
-                    }
+            <MudPaper Class="pa-5"
+                      Elevation="0">
+                <MudStack>
+                    <MudText Typo="Typo.h5">
+                        @Model.Name.CommonName (@Model.Name.Official)
+                    </MudText>
+                    <MudText Typo="Typo.h6">Região: @Model.Region</MudText>
+                    <MudText Typo="Typo.h6">Capital: @Model.Capital.First()</MudText>
+                    <MudText Typo="Typo.h6">População: @Model.Population</MudText>
+                    <MudText Typo="Typo.h6">Línguas</MudText>
+                    <MudStack Row="true"
+                              Wrap="Wrap.Wrap">
+                        @foreach (var lang in Model.Languages)
+                        {
+                            <MudChip T="string">@lang.Value</MudChip>
+                        }
+                    </MudStack>
+                    <MudText Typo="Typo.h6">Continentes</MudText>
+                    <MudStack Row="true"
+                              Wrap="Wrap.Wrap">
+                        @foreach (var continent in Model.Continents)
+                        {
+                            <MudChip T="string">@continent</MudChip>
+                        }
+                    </MudStack>
                 </MudStack>
-                <MudText Typo="Typo.h6">Continentes</MudText>
-                <MudStack Row="true"
-                          Wrap="Wrap.Wrap">
-                    @foreach (var continent in Model.Continents)
-                    {
-                        <MudChip T="string">@continent</MudChip>
-                    }
-                </MudStack>
-            </MudStack>
+            </MudPaper>
         </MudStack>
     </DialogContent>
     <DialogActions>

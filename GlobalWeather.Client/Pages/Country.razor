@@ -33,7 +33,8 @@ else
         <MudList T="CountryModel">
             @foreach (var countryModel in _countries)
             {
-                <MudListItem T="CountryModel">
+                <MudListItem T="CountryModel"
+                             OnClick="@(() => OnClick(countryModel))">
                     <AvatarContent>
                         <MudImage Src="@GetCountryImage(countryModel)"
                                   Class="rounded-lg"

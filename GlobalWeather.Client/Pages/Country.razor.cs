@@ -1,6 +1,8 @@
-﻿using GlobalWeather.Shared.Contracts;
+﻿using GlobalWeather.Client.Layout;
+using GlobalWeather.Shared.Contracts;
 using GlobalWeather.Shared.Models.Countries;
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
 
 namespace GlobalWeather.Client.Pages;
 
@@ -19,6 +21,26 @@ public partial class Country : IDisposable
             : string.Empty;
     }
 
+    private async Task OnClick(CountryModel model)
+    {
+        var parameters = new DialogParameters<CountryDialog>
+        {
+            { x => x.Model, model }
+        };
+
+        var options = new DialogOptions()
+        {
+            CloseButton = true,
+            MaxWidth = MaxWidth.Small,
+            FullWidth = true
+        };
+
+        await DialogService.ShowAsync<CountryDialog>(
+            "Informação",
+            parameters,
+            options);
+    }
+
     private async Task OnLoadAsync(string region)
     {
         if (_region == region)
@@ -27,7 +49,7 @@ public partial class Country : IDisposable
         }
 
         _region = region;
-        
+
         if (string.IsNullOrWhiteSpace(region))
         {
             _countries = [];
@@ -52,6 +74,7 @@ public partial class Country : IDisposable
     }
 
     [Inject] private ICountryService CountryService { get; set; } = null!;
+    [Inject] private IDialogService DialogService { get; set; } = null!;
 
     public void Dispose()
     {

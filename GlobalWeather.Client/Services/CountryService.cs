@@ -1,4 +1,6 @@
-﻿using System.Net.Http.Json;
+﻿using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using Blazored.LocalStorage;
 using GlobalWeather.Shared.Contracts;
 using GlobalWeather.Shared.Models;
 using GlobalWeather.Shared.Models.Countries;
@@ -7,6 +9,7 @@ namespace GlobalWeather.Client.Services;
 
 internal sealed class CountryService(
     HttpClient client,
+    ILocalStorageService localStorage,
     ILogger<CountryService> logger) : ICountryService
 {
     public async Task<ResultModel<List<CountryModel>>> GetCountriesByRegionAsync(
@@ -53,19 +56,59 @@ internal sealed class CountryService(
         }
     }
 
-    public Task<ResultModel<int>> AddCountryToFavoritesAsync(
+    public async Task<ResultModel<int>> AddCountryToFavoritesAsync(
         int code,
         string userId,
         CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var token = await localStorage.GetItemAsStringAsync("token", cancellationToken);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var result = await client.PutAsync(
+                code.ToString(),
+                null,
+                cancellationToken);
+
+            var content = await result.Content.ReadFromJsonAsync<ResultModel<int>>(cancellationToken);
+
+            return content ?? ResultModel<int>.ErrorResult("Couldn't add country to favorites");
+        }
+        catch (Exception e)
+        {
+            logger.LogError("Error on add country {code} to user {user} favorites. Error",
+                userId,
+                e.ToString());
+
+            return ResultModel<int>.ErrorResult("Internal server error");
+        }
     }
 
-    public Task<ResultModel<int>> RemoveCountryFromFavoritesAsync(
+    public async Task<ResultModel<int>> RemoveCountryFromFavoritesAsync(
         int code,
         string userId,
         CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var token = await localStorage.GetItemAsStringAsync("token", cancellationToken);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            
+            var result = await client.DeleteAsync(
+                code.ToString(),
+                cancellationToken);
+
+            var content = await result.Content.ReadFromJsonAsync<ResultModel<int>>(cancellationToken);
+
+            return content ?? ResultModel<int>.ErrorResult("Couldn't remove country from favorites");
+        }
+        catch (Exception e)
+        {
+            logger.LogError("Error on remove country {code} from user {user} favorites. Error",
+                userId,
+                e.ToString());
+
+            return ResultModel<int>.ErrorResult("Internal server error");
+        }
     }
 }

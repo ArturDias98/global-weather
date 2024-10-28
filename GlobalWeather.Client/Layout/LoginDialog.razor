@@ -1,0 +1,57 @@
+@using GlobalWeather.Shared.Contracts
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="_form"></MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudStack Row="true"
+                  Wrap="Wrap.Wrap">
+            <MudButton Style="text-transform: none"
+                       OnClick="() => Dialog.Close()">
+                Cancelar
+            </MudButton>
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Info"
+                       Style="text-transform: none"
+                       OnClick="OnLogin">
+                Confirmar
+            </MudButton>
+        </MudStack>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private MudForm _form = null!;
+    private string _email = string.Empty;
+    private string _password = string.Empty;
+
+    private async Task OnLogin()
+    {
+        await _form.Validate();
+
+        if (!_form.IsValid)
+        {
+            return;
+        }
+
+        var result = await UserService.LoginAsync(
+            _email,
+            _password,
+            Token);
+
+        if (!result.Success)
+        {
+            Snackbar.Clear();
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomCenter;
+            Snackbar.Add(
+                "Não foi possível realizar login. Verifique email e senha",
+                Severity.Error);
+        }
+    }
+
+    [Inject] private IUserService UserService { get; set; } = null!;
+    [Inject] private ISnackbar Snackbar { get; set; } = null!;
+
+    [Parameter] public CancellationToken Token { get; set; }
+    [CascadingParameter] private MudDialogInstance Dialog { get; set; } = null!;
+}

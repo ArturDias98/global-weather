@@ -1,0 +1,26 @@
+@page "/weather"
+
+<PageTitle>Weather</PageTitle>
+
+<MudText Typo="Typo.h4"
+         Class="mt-10 mb-5">
+    Clima
+</MudText>
+
+<MudTextField T="string"
+              Value="_name"
+              Placeholder="Cidade"
+              HelperText="Busque pelo nome da cidade"
+              Variant="Variant.Outlined"
+              ValueChanged="OnLoadAsync"
+              AdornmentIcon="@Icons.Material.Outlined.Search"
+              Adornment="Adornment.End">
+</MudTextField>
+
+@if (_loading)
+{
+    <MudProgressLinear Size="Size.Medium"
+                       Indeterminate="true"
+                       Class="mt-10">
+    </MudProgressLinear>
+}

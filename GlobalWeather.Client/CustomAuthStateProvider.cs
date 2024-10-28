@@ -1,5 +1,5 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text.Json;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 
@@ -7,13 +7,28 @@ namespace GlobalWeather.Client;
 
 public class CustomAuthStateProvider(ILocalStorageService localStorage) : AuthenticationStateProvider
 {
-    private static IEnumerable<Claim> GetClaims(string token)
+    private static IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
     {
-        JwtSecurityTokenHandler handler = new();
+        var payload = jwt.Split('.')[1];
+        var jsonBytes = ParseBase64WithoutPadding(payload);
+        var keyValuePairs = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonBytes)
+                            ?? throw new Exception("Could not deserialize JSON");
+        return keyValuePairs.Select(kvp => new Claim(kvp.Key, kvp.Value.ToString() ?? string.Empty));
+    }
 
-        var read = handler.ReadJwtToken(token);
+    private static byte[] ParseBase64WithoutPadding(string base64)
+    {
+        switch (base64.Length % 4)
+        {
+            case 2:
+                base64 += "==";
+                break;
+            case 3:
+                base64 += "=";
+                break;
+        }
 
-        return read.Claims;
+        return Convert.FromBase64String(base64);
     }
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -24,9 +39,16 @@ public class CustomAuthStateProvider(ILocalStorageService localStorage) : Authen
 
         if (!string.IsNullOrWhiteSpace(token))
         {
-            identity = new ClaimsIdentity(GetClaims(token), "Bearer");
+            try
+            {
+                identity = new ClaimsIdentity(ParseClaimsFromJwt(token), "Bearer");
+            }
+            catch (Exception e)
+            {
+                //
+            }
         }
-        
+
         var user = new ClaimsPrincipal(identity);
         var state = new AuthenticationState(user);
 

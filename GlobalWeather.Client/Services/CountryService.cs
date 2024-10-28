@@ -76,7 +76,8 @@ internal sealed class CountryService(
         }
         catch (Exception e)
         {
-            logger.LogError("Error on add country {code} to user {user} favorites. Error",
+            logger.LogError("Error on add country {code} to user {user} favorites. Error: {error}",
+                code,
                 userId,
                 e.ToString());
 
@@ -104,7 +105,8 @@ internal sealed class CountryService(
         }
         catch (Exception e)
         {
-            logger.LogError("Error on remove country {code} from user {user} favorites. Error",
+            logger.LogError("Error on remove country {code} from user {user} favorites. Error: {error}",
+                code,
                 userId,
                 e.ToString());
 

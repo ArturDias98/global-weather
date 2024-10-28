@@ -13,9 +13,14 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddMudServices();
 builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddScoped<AuthService>();
 builder.Services.AddHttpClient<ICountryService, CountryService>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:44336/api/v1/country/");
+});
+builder.Services.AddHttpClient<IUserService, UserService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:44336/api/v1/user/");
 });
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 builder.Services.AddAuthorizationCore();

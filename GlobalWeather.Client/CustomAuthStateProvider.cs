@@ -20,11 +20,11 @@ public class CustomAuthStateProvider(ILocalStorageService localStorage) : Authen
     {
         var token = await localStorage.GetItemAsStringAsync("token");
 
-        var identity = new ClaimsIdentity("Bearer");
+        var identity = new ClaimsIdentity();
 
         if (!string.IsNullOrWhiteSpace(token))
         {
-            identity.AddClaims(GetClaims(token));
+            identity = new ClaimsIdentity(GetClaims(token), "Bearer");
         }
         
         var user = new ClaimsPrincipal(identity);

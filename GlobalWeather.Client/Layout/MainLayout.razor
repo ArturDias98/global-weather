@@ -1,4 +1,8 @@
-﻿@inherits LayoutComponentBase
+﻿@using GlobalWeather.Client.Services
+@inherits LayoutComponentBase
+
+@inject AuthService AuthService
+@inject IDialogService DialogService
 
 <MudThemeProvider IsDarkMode="true"/>
 <MudPopoverProvider/>
@@ -13,6 +17,18 @@
                        Href="https://github.com/ArturDias98/global-weather"
                        Target="_blank">
         </MudIconButton>
+        <AuthorizeView>
+            <Authorized>
+                <MudIconButton Icon="@Icons.Material.Outlined.Logout"
+                               OnClick="LogOutAsync">
+                </MudIconButton>
+            </Authorized>
+            <NotAuthorized>
+                <MudIconButton Icon="@Icons.Material.Outlined.Login"
+                               OnClick="LoginAsync">
+                </MudIconButton>
+            </NotAuthorized>
+        </AuthorizeView>
     </MudAppBar>
     <MudMainContent>
         <MudContainer MaxWidth="MaxWidth.Medium">
@@ -20,3 +36,26 @@
         </MudContainer>
     </MudMainContent>
 </MudLayout>
+
+@code{
+
+    private async Task LoginAsync()
+    {
+        var options = new DialogOptions()
+        {
+            CloseButton = true,
+            MaxWidth = MaxWidth.ExtraSmall,
+            FullWidth = true
+        };
+
+        await DialogService.ShowAsync<LoginDialog>(
+            "Login",
+            options);
+    }
+
+    private async Task LogOutAsync()
+    {
+        await AuthService.ClearAsync();
+    }
+
+}

@@ -20,6 +20,13 @@
                           InputType="InputType.Password"
                           Variant="Variant.Outlined">
             </MudTextField>
+            <MudButton Variant="Variant.Text"
+                       Style="text-transform: none"
+                       Class="ml-auto"
+                       Color="Color.Info"
+                       OnClick="OnCreate">
+                Criar conta
+            </MudButton>
         </MudForm>
     </DialogContent>
     <DialogActions>
@@ -76,9 +83,26 @@
         }
     }
 
+    private async Task OnCreate()
+    {
+        Dialog.Close();
+
+        var options = new DialogOptions()
+        {
+            CloseButton = true,
+            MaxWidth = MaxWidth.ExtraSmall,
+            FullWidth = true
+        };
+
+        await DialogService.ShowAsync<CreateUserDialog>(
+            "Criar usuário",
+            options);
+    }
+
     [Inject] private IUserService UserService { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
     [Inject] private AuthService AuthService { get; set; } = null!;
+    [Inject] private IDialogService DialogService { get; set; } = null!;
 
     [Parameter] public CancellationToken Token { get; set; }
     [CascadingParameter] private MudDialogInstance Dialog { get; set; } = null!;

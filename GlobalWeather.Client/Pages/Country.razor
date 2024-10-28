@@ -1,5 +1,70 @@
 ﻿@page "/country"
+@using GlobalWeather.Shared.Models.Countries
 
-@code {
+<PageTitle>country</PageTitle>
 
+<MudText Typo="Typo.h4"
+         Class="mt-10 mb-5">
+    Países
+</MudText>
+
+<MudTextField T="string"
+              Value="_region"
+              Placeholder="Região"
+              HelperText="Busque por regiões: Asia, Europa ..."
+              Variant="Variant.Outlined"
+              ValueChanged="OnLoadAsync"
+              AdornmentIcon="@Icons.Material.Outlined.Search"
+              Adornment="Adornment.End">
+</MudTextField>
+
+@if (_loading)
+{
+    <MudProgressLinear Size="Size.Medium"
+                       Indeterminate="true"
+                       Class="mt-10">
+    </MudProgressLinear>
+}
+else
+{
+    @if (_countries.Count != 0)
+    {
+        //Exibir: Nome (Common e official), Capital, Languages, Region, Coordinates, Flags, Population
+        <MudList T="CountryModel">
+            @foreach (var countryModel in _countries)
+            {
+                <MudListItem T="CountryModel">
+                    <AvatarContent>
+                        <MudImage Src="@GetCountryImage(countryModel)"
+                                  Class="rounded-lg"
+                                  Height="100"
+                                  Width="100"
+                                  ObjectFit="ObjectFit.Cover">
+                        </MudImage>
+                    </AvatarContent>
+                    <ChildContent>
+                        <MudStack Class="ml-5">
+                            <MudText Typo="Typo.h6">@countryModel.Name.CommonName (@countryModel.Name.Official)</MudText>
+                            <MudStack Row="true"
+                                      Wrap="Wrap.Wrap">
+                                <MudChip T="string"
+                                         Variant="Variant.Text"
+                                         Color="Color.Info">
+                                    @countryModel.Region
+                                </MudChip>
+                                <MudChip T="string"
+                                         Variant="Variant.Text">
+                                    Capital: @countryModel.Capital.First()
+                                </MudChip>
+                                <MudChip T="string"
+                                         Variant="Variant.Text">
+                                    População: @countryModel.Population
+                                </MudChip>
+                            </MudStack>
+                        </MudStack>
+                    </ChildContent>
+                </MudListItem>
+            }
+        </MudList>
+    }
 }

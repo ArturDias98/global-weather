@@ -16,6 +16,29 @@
       <Content Remove="Pages\Counter.razor" />
       <Content Remove="Pages\Weather.razor" />
       <Content Remove="Layout\NavMenu.razor" />
+      <Content Remove="wwwroot\sample-data\**" />
+      <Content Remove="wwwroot\css\bootstrap\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="wwwroot\sample-data\**" />
+      <Compile Remove="wwwroot\css\bootstrap\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="wwwroot\sample-data\**" />
+      <EmbeddedResource Remove="wwwroot\css\bootstrap\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="wwwroot\sample-data\**" />
+      <None Remove="wwwroot\css\bootstrap\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\sample-data\weather.json" />
+      <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\bootstrap.min.css" />
+      <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\bootstrap.min.css.map" />
     </ItemGroup>
 
 </Project>

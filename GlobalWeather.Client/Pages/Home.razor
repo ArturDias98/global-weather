@@ -2,6 +2,39 @@
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+@* <MudText Typo="Typo.h5" *@
+@*          Class="mt-5" *@
+@*          Align="Align.Center"> *@
+@*     Consulte infromações climáticas e dados de países *@
+@* </MudText> *@
 
-Welcome to your new app.
+<MudStack Wrap="Wrap.Wrap"
+          Row="true"
+          Class="mt-5"
+          Justify="Justify.Center">
+    <MudButton Style="text-transform: none"
+               Href="country">
+        <MudCard Style="width: 18.75rem"
+                 Outlined="true">
+            <MudCardHeader>
+                <MudText Typo="Typo.h5">Países</MudText>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudText>Informações sobre população, idioma, moeda e muito mais.</MudText>
+            </MudCardContent>
+        </MudCard>
+    </MudButton>
+
+    <MudButton Style="text-transform: none"
+               Href="weather">
+        <MudCard Style="width: 18.75rem"
+                 Outlined="true">
+            <MudCardHeader>
+                <MudText Typo="Typo.h5">Clima</MudText>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudText>Obtenha informações climáticas de cidades</MudText>
+            </MudCardContent>
+        </MudCard>
+    </MudButton>
+</MudStack>

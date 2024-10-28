@@ -26,13 +26,13 @@ public partial class Country : IDisposable
             return;
         }
 
-        if (string.IsNullOrWhiteSpace(_region))
+        _region = region;
+        
+        if (string.IsNullOrWhiteSpace(region))
         {
             _countries = [];
             return;
         }
-
-        _region = region;
 
         _loading = true;
         StateHasChanged();

@@ -19,14 +19,18 @@
         </MudIconButton>
         <AuthorizeView>
             <Authorized>
-                <MudIconButton Icon="@Icons.Material.Outlined.Logout"
-                               OnClick="LogOutAsync">
-                </MudIconButton>
+                <MudTooltip Text="Logout">
+                    <MudIconButton Icon="@Icons.Material.Outlined.Logout"
+                                   OnClick="LogOutAsync">
+                    </MudIconButton>
+                </MudTooltip>
             </Authorized>
             <NotAuthorized>
-                <MudIconButton Icon="@Icons.Material.Outlined.Login"
-                               OnClick="LoginAsync">
-                </MudIconButton>
+                <MudTooltip Text="Login">
+                    <MudIconButton Icon="@Icons.Material.Outlined.Login"
+                                   OnClick="LoginAsync">
+                    </MudIconButton>
+                </MudTooltip>
             </NotAuthorized>
         </AuthorizeView>
     </MudAppBar>

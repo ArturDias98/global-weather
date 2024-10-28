@@ -1,4 +1,6 @@
+@using GlobalWeather.Client.Services
 @using GlobalWeather.Shared.Contracts
+
 <MudDialog>
     <DialogContent>
         <MudForm @ref="_form">
@@ -54,7 +56,15 @@
             _password,
             Token);
 
-        if (!result.Success)
+        if (result.Success)
+        {
+            await AuthService.AuthenticateAsync(
+                result.Result!,
+                Token);
+
+            Dialog.Close();
+        }
+        else
         {
             Snackbar.Clear();
             Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomCenter;
@@ -66,6 +76,7 @@
 
     [Inject] private IUserService UserService { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
+    [Inject] private AuthService AuthService { get; set; } = null!;
 
     [Parameter] public CancellationToken Token { get; set; }
     [CascadingParameter] private MudDialogInstance Dialog { get; set; } = null!;

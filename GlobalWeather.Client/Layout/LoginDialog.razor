@@ -1,7 +1,22 @@
 @using GlobalWeather.Shared.Contracts
 <MudDialog>
     <DialogContent>
-        <MudForm @ref="_form"></MudForm>
+        <MudForm @ref="_form">
+            <MudTextField T="string"
+                          Label="Email"
+                          Required="true"
+                          RequiredError="Informe um email válido"
+                          @bind-Value="_email"
+                          InputType="InputType.Email">
+            </MudTextField>
+            <MudTextField T="string"
+                          Label="Senha"
+                          Required="true"
+                          RequiredError="Informe a senha"
+                          @bind-Value="_password"
+                          InputType="InputType.Password">
+            </MudTextField>
+        </MudForm>
     </DialogContent>
     <DialogActions>
         <MudStack Row="true"

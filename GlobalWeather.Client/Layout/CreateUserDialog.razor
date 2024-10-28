@@ -1,0 +1,114 @@
+@using System.Text
+@using GlobalWeather.Shared.Contracts
+
+<MudDialog>
+    <DialogContent>
+        <MudPaper>
+            <MudForm @ref="_form">
+                <MudTextField T="string"
+                              Label="Email"
+                              Required="true"
+                              RequiredError="O email é obrigatório"
+                              @bind-Value="_email"
+                              InputType="InputType.Email">
+                </MudTextField>
+                <MudTextField T="string"
+                              Label="Senha"
+                              Required="true"
+                              Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))"
+                              RequiredError="A senha é obrigatória"
+                              @bind-Value="_password"
+                              InputType="InputType.Password">
+                </MudTextField>
+                <MudTextField T="string"
+                              Label="Senha"
+                              HelperText="Repita a senha"
+                              InputType="InputType.Password"
+                              Validation="@(new Func<string, string>(PasswordMatch))">
+                </MudTextField>
+            </MudForm>
+        </MudPaper>
+    </DialogContent>
+    <DialogActions>
+        <MudStack Row="true"
+                  Wrap="Wrap.Wrap">
+            <MudButton Style="text-transform: none"
+                       OnClick="() => Dialog.Close()">
+                Cancelar
+            </MudButton>
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Info"
+                       Style="text-transform: none"
+                       OnClick="OnAdd">
+                Confirmar
+            </MudButton>
+        </MudStack>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private MudForm _form = null!;
+    private string _email = string.Empty;
+    private string _password = string.Empty;
+
+    private string PasswordMatch(string password)
+    {
+        return _password != password
+            ? "As senhas devem ser iguais"
+            : string.Empty;
+    }
+
+    private static IEnumerable<string> PasswordStrength(string pw)
+    {
+        if (string.IsNullOrWhiteSpace(pw))
+        {
+            yield return "A senha é obrigatória";
+            yield break;
+        }
+
+        if (pw.Length < 6)
+        {
+            yield return "A senha deve conter no mínimo 6 caracteres";
+        }
+    }
+
+    private async Task OnAdd()
+    {
+        await _form.Validate();
+
+        if (!_form.IsValid)
+        {
+            return;
+        }
+
+        var result = await UserService.CreateUserAsync(
+            _email,
+            _password,
+            Token);
+
+        if (!result.Success)
+        {
+            Snackbar.Clear();
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomCenter;
+
+            var message = new StringBuilder()
+                .Append("<p>Não foi possível cadastrar o usuário</p>")
+                .Append("<ul>");
+
+            foreach (var resultError in result.Errors)
+            {
+                message.Append($"<li>{resultError}</li>");
+            }
+
+            message.Append("</ul>");
+
+            Snackbar.Add(new MarkupString(message.ToString()), Severity.Error);
+        }
+    }
+
+    [Inject] private IUserService UserService { get; set; } = null!;
+    [Inject] private ISnackbar Snackbar { get; set; } = null!;
+
+    [Parameter] public CancellationToken Token { get; set; }
+    [CascadingParameter] private MudDialogInstance Dialog { get; set; } = null!;
+}

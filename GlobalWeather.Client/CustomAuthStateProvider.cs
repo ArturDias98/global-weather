@@ -43,7 +43,7 @@ public class CustomAuthStateProvider(ILocalStorageService localStorage) : Authen
             {
                 identity = new ClaimsIdentity(ParseClaimsFromJwt(token), "Bearer");
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 //
             }

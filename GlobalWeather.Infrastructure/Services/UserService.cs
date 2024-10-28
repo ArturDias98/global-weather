@@ -4,6 +4,7 @@ using GlobalWeather.Domain.Helpers;
 using GlobalWeather.Domain.Repositories;
 using GlobalWeather.Shared.Contracts;
 using GlobalWeather.Shared.Models;
+using GlobalWeather.Shared.Models.Users;
 using Microsoft.Extensions.Logging;
 
 namespace GlobalWeather.Infrastructure.Services;
@@ -12,6 +13,35 @@ internal sealed class UserService(
     IUserRepository userRepository,
     ILogger<UserService> logger) : IUserService
 {
+    public async Task<ResultModel<UserModel>> GetUserByIdAsync(string userId, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var user = await userRepository.GetUserByIdAsync(userId, cancellationToken);
+            var parse = new UserModel
+            {
+                Id = user.Id,
+                Email = user.Email,
+                FavoriteCountries = user.FavoriteCountries,
+                FavoriteCities = user.FavoriteCities.Select(i => new FavoriteCityModel
+                {
+                    Id = i.Id,
+                    Latitude = i.Latitude,
+                    Longitude = i.Longitude
+                }).ToList(),
+            };
+
+            return ResultModel<UserModel>.SuccessResult(parse);
+        }
+        catch (Exception e)
+        {
+            logger.LogError("Error on get user by id {id}. Error: {message}",
+                userId,
+                e.ToString());
+            return ResultModel<UserModel>.ErrorResult("User not found");
+        }
+    }
+
     public async Task<ResultModel<string>> CreateUserAsync(
         string email,
         string password,

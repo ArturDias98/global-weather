@@ -4,7 +4,7 @@
 
 <MudDialog>
     <DialogContent>
-        <MudPaper>
+        <MudPaper Class="pa-5">
             <MudForm @ref="_form">
                 <MudTextField T="string"
                               Label="Email"
@@ -118,7 +118,7 @@
     [Inject] private IUserService UserService { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
     [Inject] private AuthService AuthService { get; set; } = null!;
-    
+
     [Parameter] public CancellationToken Token { get; set; }
     [CascadingParameter] private MudDialogInstance Dialog { get; set; } = null!;
 }

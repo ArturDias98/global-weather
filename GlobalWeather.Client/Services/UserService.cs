@@ -9,6 +9,27 @@ internal class UserService(
     HttpClient httpClient,
     ILogger<UserService> logger) : IUserService
 {
+    public async Task<ResultModel<UserModel>> GetUserByIdAsync(
+        string userId,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var result = await httpClient.GetFromJsonAsync<ResultModel<UserModel>>(
+                userId,
+                cancellationToken);
+
+            return result ?? ResultModel<UserModel>.ErrorResult("Couldn't get user by id.");
+        }
+        catch (Exception e)
+        {
+            logger.LogError("Error on get user by id {id}. Error: {error}",
+                userId,
+                e.ToString());
+            return ResultModel<UserModel>.ErrorResult("Internal server error");
+        }
+    }
+
     public async Task<ResultModel<string>> CreateUserAsync(
         string email,
         string password,

@@ -21,30 +21,13 @@ internal static class UserEndpoints
     {
         app.MapGet("api/v1/user/{id}", async (
                 [FromRoute] string id,
-                [FromServices] IUserRepository userRepository,
+                [FromServices] IUserService service,
                 CancellationToken cancellationToken) =>
             {
-                try
-                {
-                    var user = await userRepository.GetUserByIdAsync(id, cancellationToken);
-                    var parse = new UserModel
-                    {
-                        Id = user.Id,
-                        Email = user.Email,
-                        FavoriteCountries = user.FavoriteCountries,
-                        FavoriteCities = user.FavoriteCities.Select(i => new FavoriteCityModel
-                        {
-                            Id = i.Id,
-                            Latitude = i.Latitude,
-                            Longitude = i.Longitude
-                        }).ToList(),
-                    };
-                    return Results.Ok(ResultModel<UserModel>.SuccessResult(parse));
-                }
-                catch (Exception)
-                {
-                    return Results.NotFound(ResultModel<UserModel>.ErrorResult("User not found"));
-                }
+                var result = await service.GetUserByIdAsync(id, cancellationToken);
+                return result.Success
+                    ? Results.Ok(result)
+                    : Results.NotFound(result);
             })
             .WithName("get-user-by-id")
             .WithDescription("Get user by id")
@@ -81,7 +64,7 @@ internal static class UserEndpoints
             .Produces<ResultModel<string>>()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest);
-        
+
         app.MapPost("api/v1/user/login", async (
                 [FromBody] LoginModel model,
                 [FromServices] IUserService service,

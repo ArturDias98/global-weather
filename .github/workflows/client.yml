@@ -31,4 +31,4 @@ jobs:
         aws-region: us-east-1
 
     - name: Publish to AWS S3
-      run: aws s3 sync ./publish/wwwroot s3://deploy-bucket-api --delete
+      run: aws s3 sync ./publish/wwwroot s3://deploy-blazor-client --delete

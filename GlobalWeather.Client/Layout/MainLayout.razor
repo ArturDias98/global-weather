@@ -1,4 +1,5 @@
-﻿@using GlobalWeather.Client.Services
+﻿@using System.Security.Claims
+@using GlobalWeather.Client.Services
 @inherits LayoutComponentBase
 
 @inject AuthService AuthService
@@ -19,6 +20,10 @@
         </MudIconButton>
         <AuthorizeView>
             <Authorized>
+                <MudTooltip Text="@(GetUserEmail(context.User))">
+                    <MudIconButton Icon="@Icons.Material.Outlined.Person">
+                    </MudIconButton>
+                </MudTooltip>
                 <MudTooltip Text="Logout">
                     <MudIconButton Icon="@Icons.Material.Outlined.Logout"
                                    OnClick="LogOutAsync">
@@ -43,6 +48,13 @@
 
 @code{
 
+    private static string GetUserEmail(ClaimsPrincipal claims)
+    {
+        var email = claims.FindFirst(i => i.Type == "email");
+
+        return email!.Value;
+    }
+    
     private async Task LoginAsync()
     {
         var options = new DialogOptions()

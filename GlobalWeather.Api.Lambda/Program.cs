@@ -47,6 +47,7 @@ builder.Services.AddCors(opt =>
 builder.Services.AddAWSLambdaHosting(LambdaEventSource.RestApi);
 
 var app = builder.Build();
+app.UseCors();
 
 if (app.Environment.IsDevelopment())
 {
@@ -54,17 +55,16 @@ if (app.Environment.IsDevelopment())
     await database.CreateTablesAsync(new CancellationTokenSource(TimeSpan.FromSeconds(10)).Token);
 }
 
-app.UseCors();
-
-app.UseSwagger();
-app.UseSwaggerUI();
-
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapGet("api/v1/health", () => Results.Ok("Healthy"));
 app.MapCountryEndpoints()
     .MapWeatherEndpoints()
     .MapUserEndpoints();
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.Run();

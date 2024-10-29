@@ -10,7 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services
     .AddApiServices()
-    .AddInfrastructure(builder.Configuration);
+    .AddInfrastructure(
+        builder.Configuration,
+        builder.Environment);
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -45,6 +47,12 @@ builder.Services.AddCors(opt =>
 builder.Services.AddAWSLambdaHosting(LambdaEventSource.RestApi);
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    var database = app.Services.GetRequiredService<DatabaseHelper>();
+    await database.CreateTablesAsync(new CancellationTokenSource(TimeSpan.FromSeconds(10)).Token);
+}
 
 app.UseCors();
 

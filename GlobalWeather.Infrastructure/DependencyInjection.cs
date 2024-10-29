@@ -1,3 +1,4 @@
+using Amazon;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.Runtime;
@@ -8,6 +9,7 @@ using GlobalWeather.Infrastructure.Services;
 using GlobalWeather.Shared.Contracts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace GlobalWeather.Infrastructure;
 
@@ -15,12 +17,13 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(
         this IServiceCollection services,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        IHostEnvironment environment)
     {
         services.ConfigureHttpClient(configuration);
         
         return services
-            .ConfigureDbContext(configuration)
+            .ConfigureDbContext(configuration, environment)
             .AddTransient<DatabaseHelper>()
             .AddTransient<IUserRepository, UserRepository>()
             .AddTransient<IUserService, UserService>();
@@ -40,15 +43,22 @@ public static class DependencyInjection
 
     private static IServiceCollection ConfigureDbContext(
         this IServiceCollection services,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        IHostEnvironment environment)
     {
         var options = new AwsDbOptions();
         configuration.Bind(AwsDbOptions.Position, options);
 
-        var config = new AmazonDynamoDBConfig
+        var config = new AmazonDynamoDBConfig();
+
+        if (environment.IsDevelopment())
         {
-            ServiceURL = options.ServiceUrl,
-        };
+            config.ServiceURL = options.ServiceUrl;
+        }
+        else
+        {
+            config.RegionEndpoint = RegionEndpoint.USEast1;
+        }
 
         var credentials = new BasicAWSCredentials(options.AccessKey, options.SecretKey);
         var dynamoDbClient = new AmazonDynamoDBClient(credentials, config);

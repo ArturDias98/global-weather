@@ -1,9 +1,13 @@
 ﻿@using System.Security.Claims
 @using GlobalWeather.Client.Services
+@using Microsoft.AspNetCore.Components.WebAssembly.Hosting
+@using static GlobalWeather.Client.ServerHelper;
+
 @inherits LayoutComponentBase
 
 @inject AuthService AuthService
 @inject IDialogService DialogService
+@inject IWebAssemblyHostEnvironment Environment
 
 <MudThemeProvider IsDarkMode="true"/>
 <MudPopoverProvider/>
@@ -18,6 +22,12 @@
                        Href="https://github.com/ArturDias98/global-weather"
                        Target="_blank">
         </MudIconButton>
+        <MudTooltip Text="Api">
+            <MudIconButton Icon="@Icons.Material.Outlined.Api"
+                           Href="@($"{GetServerUrl(Environment)}swagger")"
+                           Target="_blank">
+            </MudIconButton>
+        </MudTooltip>
         <AuthorizeView>
             <Authorized>
                 <MudTooltip Text="@(GetUserEmail(context.User))">
@@ -54,7 +64,7 @@
 
         return email!.Value;
     }
-    
+
     private async Task LoginAsync()
     {
         var options = new DialogOptions()

@@ -3,19 +3,34 @@
         @if (_loading)
         {
             <MudSkeleton SkeletonType="SkeletonType.Rectangle"
-                         Width="200px"
-                         Height="300px">
+                         Width="250px"
+                         Height="300px"
+                         Style="margin: 0 auto">
             </MudSkeleton>
         }
         else
         {
             <MudPaper Elevation="0">
                 <MudText Typo="Typo.h5">@City.Name</MudText>
+                <MudStack Row="true"
+                          Wrap="Wrap.Wrap"
+                          Class="mb-5">
+                    <MudChip T="string"
+                             Variant="Variant.Text"
+                             Color="Color.Info">
+                        Estado: @City.State
+                    </MudChip>
+                    <MudChip T="string"
+                             Variant="Variant.Text"
+                             Color="Color.Info">
+                        País: @City.Country
+                    </MudChip>
+                </MudStack>
                 <MudStack>
-                    <MudField Label="Temperatura">@_model.Main.Temp</MudField>
-                    <MudField Label="Sensação Térmica">@_model.Main.FeelsLike</MudField>
-                    <MudField Label="Temperatura Mínima">@_model.Main.TempMin</MudField>
-                    <MudField Label="Temperatura Máxima">@_model.Main.TempMax</MudField>
+                    <MudField Label="Temperatura °C">@_model.Main.Temp</MudField>
+                    <MudField Label="Sensação Térmica °C">@_model.Main.FeelsLike</MudField>
+                    <MudField Label="Temperatura Mínima °C">@_model.Main.TempMin</MudField>
+                    <MudField Label="Temperatura Máxima °C">@_model.Main.TempMax</MudField>
                     <MudField Label="Pressão">@_model.Main.Pressure</MudField>
                     <MudField Label="Humidade">@_model.Main.Humidity</MudField>
                 </MudStack>

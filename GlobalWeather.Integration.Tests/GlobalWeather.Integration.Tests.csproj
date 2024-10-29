@@ -10,20 +10,20 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="coverlet.collector" Version="6.0.0"/>
+        <PackageReference Include="coverlet.collector" Version="6.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.10" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
         <PackageReference Include="Testcontainers.DynamoDb" Version="3.10.0" />
-        <PackageReference Include="xunit" Version="2.5.3"/>
-        <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3"/>
+        <PackageReference Include="xunit" Version="2.5.3" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
     </ItemGroup>
 
     <ItemGroup>
-        <Using Include="Xunit"/>
+      <ProjectReference Include="..\GlobalWeather.Api.Lambda\GlobalWeather.Api.Lambda.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\GlobalWeather.Api\GlobalWeather.Api.csproj" />
+        <Using Include="Xunit" />
     </ItemGroup>
 
 </Project>

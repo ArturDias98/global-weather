@@ -1,5 +1,5 @@
 using System.Net.Http.Json;
-using GlobalWeather.Api.Services;
+using GlobalWeather.Api.Lambda.Services;
 using GlobalWeather.Shared.Models;
 using GlobalWeather.Shared.Models.Users;
 

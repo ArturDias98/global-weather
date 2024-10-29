@@ -50,7 +50,7 @@ internal sealed class WeatherService(
                          ?? throw new Exception("Could not resolve OpenWeatherMapApiKey");
 
             var result = await httpClient.GetFromJsonAsync<WeatherModel>(
-                $"data/2.5/weather?lat={latitude}&lon={longitude}&appid={apiKey}",
+                $"data/2.5/weather?lat={latitude}&lon={longitude}&appid={apiKey}&units=metric",
                 cancellationToken) ?? new WeatherModel();
 
             return ResultModel<WeatherModel>.SuccessResult(result);
@@ -62,7 +62,7 @@ internal sealed class WeatherService(
                 latitude,
                 longitude,
                 e.ToString());
-            
+
             return ResultModel<WeatherModel>.ErrorResult("Could not get weather data");
         }
     }
@@ -77,9 +77,9 @@ internal sealed class WeatherService(
         {
             var user = await userRepository.GetUserByIdAsync(userId, cancellationToken);
             var id = user.AddCity(latitude, longitude);
-            
+
             await userRepository.SaveUserAsync(user, cancellationToken);
-            
+
             return ResultModel<string>.SuccessResult(id);
         }
         catch (Exception e)
@@ -102,9 +102,9 @@ internal sealed class WeatherService(
         {
             var user = await userRepository.GetUserByIdAsync(userId, cancellationToken);
             user.RemoveCity(id);
-            
+
             await userRepository.SaveUserAsync(user, cancellationToken);
-            
+
             return ResultModel<string>.SuccessResult(id);
         }
         catch (Exception e)

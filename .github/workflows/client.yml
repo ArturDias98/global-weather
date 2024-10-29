@@ -2,12 +2,24 @@ name: .NET
 
 on:
   push:
-    tags:
-      - client/*
+    branches:
+      - client
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
-  build:
-
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
 
     steps:
@@ -17,18 +29,26 @@ jobs:
       with:
         dotnet-version: 8.0.x
 
+    - name: Install .NET Wasm Tools
+      run: dotnet workload install wasm-tools
+
     - name: Restore dependencies
       run: dotnet restore GlobalWeather.Client
 
     - name: Build Blazor WebAssembly
-      run: dotnet publish GlobalWeather.Client -c Release -o ./publish
+      run: dotnet build GlobalWeather.Client -c Release --no-restore
+    
+    - name: Publish Blazor Wasm
+      run: dotnet publish GlobalWeather.Client -c:Release -o docs --nologo
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+
+    - name: Upload
+      uses: actions/upload-pages-artifact@v3
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
-
-    - name: Publish to AWS S3
-      run: aws s3 sync ./publish/wwwroot s3://deploy-blazor-client --delete
+        path: 'docs/wwwroot'
+    
+    - name: Deploy
+      id: deployment
+      uses: actions/deploy-pages@v4

@@ -23,32 +23,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.0.x
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
 
-    - name: Install .NET Wasm Tools
-      run: dotnet workload install wasm-tools
+      - name: Install .NET Wasm Tools
+        run: dotnet workload install wasm-tools
 
-    - name: Restore dependencies
-      run: dotnet restore GlobalWeather.Client
+      - name: Restore dependencies
+        run: dotnet restore GlobalWeather.Client
 
-    - name: Build Blazor WebAssembly
-      run: dotnet build GlobalWeather.Client -c Release --no-restore
-    
-    - name: Publish Blazor Wasm
-      run: dotnet publish GlobalWeather.Client -c:Release -o docs --nologo
+      - name: Build Blazor WebAssembly
+        run: dotnet build GlobalWeather.Client -c Release --no-restore
 
-    - name: Setup Pages
-      uses: actions/configure-pages@v4
+      - name: Publish Blazor Wasm
+        run: dotnet publish GlobalWeather.Client -c:Release -o docs --nologo
 
-    - name: Upload
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: 'docs/wwwroot'
-    
-    - name: Deploy
-      id: deployment
-      uses: actions/deploy-pages@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "docs/wwwroot"
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

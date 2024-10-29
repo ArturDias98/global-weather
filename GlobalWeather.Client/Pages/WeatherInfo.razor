@@ -1,4 +1,5 @@
 @page "/weather"
+@using GlobalWeather.Shared.Models.Weather
 
 <PageTitle>Weather</PageTitle>
 
@@ -23,4 +24,43 @@
                        Indeterminate="true"
                        Class="mt-10">
     </MudProgressLinear>
+}
+else
+{
+    @if (_cities.Count != 0)
+    {
+        <MudList T="CityModel">
+            @foreach (var city in _cities)
+            {
+                <MudListItem T="CityModel">
+                    <ChildContent>
+                        <MudStack Class="ml-5">
+                            <MudText Typo="Typo.h6">@city.Name</MudText>
+                            <MudStack Row="true"
+                                      Wrap="Wrap.Wrap">
+                                <MudChip T="string"
+                                         Variant="Variant.Text"
+                                         Color="Color.Info">
+                                    Estado: @city.State
+                                </MudChip>
+                                <MudChip T="string"
+                                         Variant="Variant.Text"
+                                         Color="Color.Info">
+                                    País: @city.Country
+                                </MudChip>
+                                <MudChip T="string"
+                                         Variant="Variant.Text">
+                                    Latitude: @city.Latitude.ToString("N3")
+                                </MudChip>
+                                <MudChip T="string"
+                                         Variant="Variant.Text">
+                                    Longitude: @city.Longitude.ToString("N3")
+                                </MudChip>
+                            </MudStack>
+                        </MudStack>
+                    </ChildContent>
+                </MudListItem>
+            }
+        </MudList>
+    }
 }

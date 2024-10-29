@@ -1,0 +1,31 @@
+<MudDialog>
+    <DialogContent>
+        @if (_loading)
+        {
+            <MudSkeleton SkeletonType="SkeletonType.Rectangle"
+                         Width="200px"
+                         Height="300px">
+            </MudSkeleton>
+        }
+        else
+        {
+            <MudPaper Elevation="0">
+                <MudText Typo="Typo.h5">@City.Name</MudText>
+                <MudStack>
+                    <MudField Label="Temperatura">@_model.Main.Temp</MudField>
+                    <MudField Label="Sensação Térmica">@_model.Main.FeelsLike</MudField>
+                    <MudField Label="Temperatura Mínima">@_model.Main.TempMin</MudField>
+                    <MudField Label="Temperatura Máxima">@_model.Main.TempMax</MudField>
+                    <MudField Label="Pressão">@_model.Main.Pressure</MudField>
+                    <MudField Label="Humidade">@_model.Main.Humidity</MudField>
+                </MudStack>
+            </MudPaper>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="() => Dialog.Close()"
+                   Style="text-transform: none">
+            Fechar
+        </MudButton>
+    </DialogActions>
+</MudDialog>

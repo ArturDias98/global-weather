@@ -32,7 +32,8 @@ else
         <MudList T="CityModel">
             @foreach (var city in _cities)
             {
-                <MudListItem T="CityModel">
+                <MudListItem T="CityModel"
+                             OnClick="@(() => OnShowInfo(city))">
                     <ChildContent>
                         <MudStack Class="ml-5">
                             <MudText Typo="Typo.h6">@city.Name</MudText>

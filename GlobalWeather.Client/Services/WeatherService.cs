@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Blazored.LocalStorage;
@@ -41,8 +42,10 @@ internal sealed class WeatherService(
     {
         try
         {
+            var lat = latitude.ToString("F4", CultureInfo.InvariantCulture);
+            var lon = longitude.ToString("F4", CultureInfo.InvariantCulture);
             var result = await client.GetFromJsonAsync<ResultModel<WeatherModel>>(
-                $"info?lat={latitude}&lon={longitude}",
+                $"info?lat={lat}&lon={lon}",
                 cancellationToken) ?? ResultModel<WeatherModel>.ErrorResult("Couldn't get weather information");
 
             return result;

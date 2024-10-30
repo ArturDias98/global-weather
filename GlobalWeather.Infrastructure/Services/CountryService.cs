@@ -39,7 +39,7 @@ internal sealed class CountryService(
         try
         {
             var result = await httpClient.GetFromJsonAsync<CountryModel[]>(
-                             $"alpha/{code}",
+                             $"alpha/{code:D3}",
                              cancellationToken)
                          ?? [];
 

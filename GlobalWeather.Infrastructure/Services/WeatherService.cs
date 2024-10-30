@@ -1,5 +1,6 @@
 using System.Net.Http.Json;
 using GlobalWeather.Domain.Repositories;
+using GlobalWeather.Shared.Comparers;
 using GlobalWeather.Shared.Contracts;
 using GlobalWeather.Shared.Models;
 using GlobalWeather.Shared.Models.Weather;
@@ -39,6 +40,37 @@ internal sealed class WeatherService(
         }
     }
 
+    public async Task<ResultModel<CityModel>> GetCityInformationAsync(
+        double latitude,
+        double longitude,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var apiKey = configuration.GetValue<string>("OpenWeatherMapApiKey")
+                         ?? throw new Exception("Could not resolve OpenWeatherMapApiKey");
+
+            var result = await httpClient.GetFromJsonAsync<List<CityModel>>(
+                $"geo/1.0/reverse?lat={latitude}&lon={longitude}&limit=10&appid={apiKey}",
+                cancellationToken) ?? [];
+
+            var first = result.FirstOrDefault();
+
+            return first is not null
+                ? ResultModel<CityModel>.SuccessResult(first)
+                : ResultModel<CityModel>.ErrorResult("Could not find city");
+        }
+        catch (Exception e)
+        {
+            logger.LogError("Error on get cities by coordinates: lat - {lat} lon - {lon}. Error: {error}",
+                latitude,
+                longitude,
+                e.ToString());
+
+            return ResultModel<CityModel>.ErrorResult("Could not get city by coordinates");
+        }
+    }
+
     public async Task<ResultModel<WeatherModel>> GetWeatherInformationAsync(
         double latitude,
         double longitude,
@@ -69,6 +101,9 @@ internal sealed class WeatherService(
 
     public async Task<ResultModel<string>> AddCityToFavoritesAsync(
         string userId,
+        string name,
+        string country,
+        string state,
         double latitude,
         double longitude,
         CancellationToken cancellationToken = default)
@@ -76,7 +111,12 @@ internal sealed class WeatherService(
         try
         {
             var user = await userRepository.GetUserByIdAsync(userId, cancellationToken);
-            var id = user.AddCity(latitude, longitude);
+            var id = user.AddCity(
+                name,
+                country,
+                state,
+                latitude,
+                longitude);
 
             await userRepository.SaveUserAsync(user, cancellationToken);
 

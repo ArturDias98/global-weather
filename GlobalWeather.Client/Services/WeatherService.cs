@@ -35,6 +35,32 @@ internal sealed class WeatherService(
         }
     }
 
+    public async Task<ResultModel<CityModel>> GetCityInformationAsync(
+        double latitude,
+        double longitude,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var lat = latitude.ToString("F4", CultureInfo.InvariantCulture);
+            var lon = longitude.ToString("F4", CultureInfo.InvariantCulture);
+            var result = await client.GetFromJsonAsync<ResultModel<CityModel>>(
+                $"city/info?lat={lat}&lon={lon}",
+                cancellationToken) ?? ResultModel<CityModel>.ErrorResult("Couldn't get city information");
+
+            return result;
+        }
+        catch (Exception e)
+        {
+            logger.LogError("Error on get city information for latitude {lat} and longitude {lon}. Error: {error}",
+                latitude,
+                longitude,
+                e.ToString());
+
+            return ResultModel<CityModel>.ErrorResult("Internal server error");
+        }
+    }
+
     public async Task<ResultModel<WeatherModel>> GetWeatherInformationAsync(
         double latitude,
         double longitude,
@@ -63,18 +89,24 @@ internal sealed class WeatherService(
 
     public async Task<ResultModel<string>> AddCityToFavoritesAsync(
         string userId,
+        string name,
+        string country,
+        string state,
         double latitude,
         double longitude,
         CancellationToken cancellationToken = default)
     {
         try
         {
-            var token = await localStorage.GetItemAsStringAsync("token", cancellationToken);
+            var token = await localStorage.GetItemAsync<string>("token", cancellationToken);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var result = await client.PutAsJsonAsync(
                 "",
                 new AddWeatherModel
                 {
+                    Name = name,
+                    Country = country,
+                    State = state,
                     Latitude = latitude,
                     Longitude = longitude
                 },
@@ -86,7 +118,8 @@ internal sealed class WeatherService(
         }
         catch (Exception e)
         {
-            logger.LogError("Error on add city with latitude {lat} and longitude {lon} to user {user} favorites. Error: {error}",
+            logger.LogError(
+                "Error on add city with latitude {lat} and longitude {lon} to user {user} favorites. Error: {error}",
                 latitude,
                 longitude,
                 userId,
@@ -103,9 +136,9 @@ internal sealed class WeatherService(
     {
         try
         {
-            var token = await localStorage.GetItemAsStringAsync("token", cancellationToken);
+            var token = await localStorage.GetItemAsync<string>("token", cancellationToken);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            
+
             var result = await client.DeleteAsync(
                 id,
                 cancellationToken);

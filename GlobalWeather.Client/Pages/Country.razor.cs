@@ -14,33 +14,6 @@ public partial class Country : IDisposable
     private bool _loading;
     private string _region = string.Empty;
 
-    private static string GetCountryImage(CountryModel country)
-    {
-        return country.Flags.TryGetValue("png", out var image)
-            ? image
-            : string.Empty;
-    }
-
-    private async Task OnClick(CountryModel model)
-    {
-        var parameters = new DialogParameters<CountryDialog>
-        {
-            { x => x.Model, model }
-        };
-
-        var options = new DialogOptions()
-        {
-            CloseButton = true,
-            MaxWidth = MaxWidth.Small,
-            FullWidth = true
-        };
-
-        await DialogService.ShowAsync<CountryDialog>(
-            "Informação",
-            parameters,
-            options);
-    }
-
     private async Task OnLoadAsync(string region)
     {
         if (_region == region)
@@ -74,7 +47,6 @@ public partial class Country : IDisposable
     }
 
     [Inject] private ICountryService CountryService { get; set; } = null!;
-    [Inject] private IDialogService DialogService { get; set; } = null!;
 
     public void Dispose()
     {

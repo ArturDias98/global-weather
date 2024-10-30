@@ -2,6 +2,7 @@
 @using GlobalWeather.Shared.Contracts
 @using GlobalWeather.Shared.Models.Countries
 @using GlobalWeather.Shared.Models.Users
+
 <MudDialog>
     <DialogContent>
         @if (_loading)
@@ -82,7 +83,7 @@
                                 </MudIconButton>
                             </MudTooltip>
                         }
-                    }   
+                    }
                 }
             </AuthorizeView>
         </MudStack>
@@ -103,20 +104,21 @@
 
         Snackbar.Clear();
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomCenter;
-        
+
         if (result.Success)
         {
             Snackbar.Add("País adicionado aos favoritos", Severity.Success);
             _userModel!.FavoriteCountries.Add(Model.Code);
+            await OnAddCountry.InvokeAsync(Model);
         }
         else
         {
             Snackbar.Add("Não foi possível adicionar o país aos favoritos", Severity.Error);
         }
-        
+
         StateHasChanged();
     }
-    
+
     private async Task RemoveCountryFromFavorites()
     {
         var result = await CountryService.RemoveCountryFromFavoritesAsync(
@@ -125,17 +127,18 @@
 
         Snackbar.Clear();
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomCenter;
-        
+
         if (result.Success)
         {
             Snackbar.Add("País removido dos favoritos", Severity.Success);
             _userModel!.FavoriteCountries.Remove(Model.Code);
+            await OnRemoveCountry.InvokeAsync(Model);
         }
         else
         {
             Snackbar.Add("Não foi possível remover o país dos favoritos", Severity.Error);
         }
-        
+
         StateHasChanged();
     }
 
@@ -161,5 +164,7 @@
     [Inject] private AuthService AuthService { get; set; } = null!;
 
     [Parameter] [EditorRequired] public CountryModel Model { get; set; } = null!;
+    [Parameter] public EventCallback<CountryModel> OnRemoveCountry { get; set; }
+    [Parameter] public EventCallback<CountryModel> OnAddCountry { get; set; }
     [CascadingParameter] private MudDialogInstance Dialog { get; set; } = null!;
 }

@@ -1,3 +1,5 @@
+using GlobalWeather.Shared.Models.Weather;
+
 namespace GlobalWeather.Shared.Models.Users;
 
 public class UserModel
@@ -8,9 +10,7 @@ public class UserModel
     public List<FavoriteCityModel> FavoriteCities { get; set; } = [];
 }
 
-public class FavoriteCityModel
+public class FavoriteCityModel : CityModel
 {
     public string Id { get; set; } = string.Empty;
-    public double Latitude { get; set; }
-    public double Longitude { get; set; }
 }

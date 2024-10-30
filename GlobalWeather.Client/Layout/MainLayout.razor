@@ -8,6 +8,7 @@
 @inject AuthService AuthService
 @inject IDialogService DialogService
 @inject IWebAssemblyHostEnvironment Environment
+@inject IJSRuntime JsRuntime
 
 <MudThemeProvider IsDarkMode="true"/>
 <MudPopoverProvider/>
@@ -17,7 +18,7 @@
 <MudLayout>
     <MudAppBar Elevation="1">
         <MudButton Variant="Variant.Text"
-                   Href="/">
+                   OnClick="@(() => JsRuntime.InvokeVoidAsync("history.back"))">
             <MudText Typo="Typo.h5" Class="ml-3">GloboClima</MudText>
         </MudButton>
         <MudSpacer/>
@@ -34,7 +35,8 @@
         <AuthorizeView>
             <Authorized>
                 <MudTooltip Text="@(GetUserEmail(context.User))">
-                    <MudIconButton Icon="@Icons.Material.Outlined.Person">
+                    <MudIconButton Icon="@Icons.Material.Outlined.Person"
+                                   Href="/user">
                     </MudIconButton>
                 </MudTooltip>
                 <MudTooltip Text="Logout">

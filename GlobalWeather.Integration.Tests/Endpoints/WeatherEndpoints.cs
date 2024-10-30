@@ -58,6 +58,9 @@ public class WeatherEndpoints : IAsyncLifetime
 
         var model = new AddWeatherModel
         {
+            Name = "Test Name",
+            Country = "Test Country",
+            State = "Test State",
             Latitude = 0.1,
             Longitude = 0.5,
         };
@@ -100,7 +103,12 @@ public class WeatherEndpoints : IAsyncLifetime
         const string email = "login@testuser.com";
         const string password = "password123456";
 
-        var city = FavoriteCity.Create(1.5, 2.5);
+        var city = FavoriteCity.Create(
+            "Test Name",
+            "Test Country",
+            "Test State",
+            1.5,
+            2.5);
         var user = await TestDatabaseHelper.CreateUserAsync(
             email,
             password,

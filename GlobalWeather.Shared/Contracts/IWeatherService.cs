@@ -9,6 +9,11 @@ public interface IWeatherService
         string cityName,
         CancellationToken cancellationToken = default);
 
+    Task<ResultModel<CityModel>> GetCityInformationAsync(
+        double latitude,
+        double longitude,
+        CancellationToken cancellationToken = default);
+    
     Task<ResultModel<WeatherModel>> GetWeatherInformationAsync(
         double latitude,
         double longitude,
@@ -16,6 +21,9 @@ public interface IWeatherService
 
     Task<ResultModel<string>> AddCityToFavoritesAsync(
         string userId,
+        string name,
+        string country,
+        string state,
         double latitude,
         double longitude,
         CancellationToken cancellationToken = default);

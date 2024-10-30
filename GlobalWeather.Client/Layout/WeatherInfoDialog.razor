@@ -38,9 +38,39 @@
         }
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="() => Dialog.Close()"
-                   Style="text-transform: none">
-            Fechar
-        </MudButton>
+        <MudStack Row="true"
+                  Wrap="Wrap.Wrap">
+            <MudButton OnClick="() => Dialog.Close()"
+                       Style="text-transform: none">
+                Fechar
+            </MudButton>
+            <AuthorizeView>
+                @if (_userModel is not null)
+                {
+                    @if (CanAddToFavorites)
+                    {
+                        <MudTooltip Text="Adicionar aos favoritos">
+                            <MudIconButton Icon="@Icons.Material.Filled.Favorite"
+                                           Color="Color.Secondary"
+                                           OnClick="OnAddToFavorites"
+                                           Disabled="_sending">
+                            </MudIconButton>
+                        </MudTooltip>
+                    }
+                    else
+                    {
+                        {
+                            <MudTooltip Text="Remover dos favoritos">
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                               Color="Color.Error"
+                                               OnClick="OnRemoveFromFavorites"
+                                               Disabled="_sending">
+                                </MudIconButton>
+                            </MudTooltip>
+                        }
+                    }
+                }
+            </AuthorizeView>
+        </MudStack>
     </DialogActions>
 </MudDialog>

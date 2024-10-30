@@ -4,29 +4,31 @@
 <MudDialog>
     <DialogContent>
         <MudForm @ref="_form">
-            <MudTextField T="string"
-                          Label="Email"
-                          Required="true"
-                          RequiredError="Informe um email válido"
-                          @bind-Value="_email"
-                          InputType="InputType.Email"
-                          Variant="Variant.Outlined">
-            </MudTextField>
-            <MudTextField T="string"
-                          Label="Senha"
-                          Required="true"
-                          RequiredError="Informe a senha"
-                          @bind-Value="_password"
-                          InputType="InputType.Password"
-                          Variant="Variant.Outlined">
-            </MudTextField>
-            <MudButton Variant="Variant.Text"
-                       Style="text-transform: none"
-                       Class="ml-auto"
-                       Color="Color.Info"
-                       OnClick="OnCreate">
-                Criar conta
-            </MudButton>
+            <MudStack>
+                <MudTextField T="string"
+                              Label="Email"
+                              Required="true"
+                              RequiredError="Informe um email válido"
+                              @bind-Value="_email"
+                              InputType="InputType.Email"
+                              Variant="Variant.Outlined">
+                </MudTextField>
+                <MudTextField T="string"
+                              Label="Senha"
+                              Required="true"
+                              RequiredError="Informe a senha"
+                              @bind-Value="_password"
+                              InputType="InputType.Password"
+                              Variant="Variant.Outlined">
+                </MudTextField>
+                <MudButton Variant="Variant.Text"
+                           Style="text-transform: none"
+                           Class="ml-auto"
+                           Color="Color.Info"
+                           OnClick="OnCreate">
+                    Criar conta
+                </MudButton>
+            </MudStack>
         </MudForm>
     </DialogContent>
     <DialogActions>
@@ -39,8 +41,18 @@
             <MudButton Variant="Variant.Filled"
                        Color="Color.Info"
                        Style="text-transform: none"
-                       OnClick="OnLogin">
-                Confirmar
+                       OnClick="OnLogin"
+                       Disabled="_loading">
+                @if (_loading)
+                {
+                    <MudProgressCircular Indeterminate="true"
+                                         Size="Size.Small">
+                    </MudProgressCircular>
+                }
+                else
+                {
+                    <MudText>Confirmar</MudText>
+                }
             </MudButton>
         </MudStack>
     </DialogActions>
@@ -50,6 +62,7 @@
     private MudForm _form = null!;
     private string _email = string.Empty;
     private string _password = string.Empty;
+    private bool _loading;
 
     private async Task OnLogin()
     {
@@ -59,6 +72,9 @@
         {
             return;
         }
+
+        _loading = true;
+        StateHasChanged();
 
         var result = await UserService.LoginAsync(
             _email,
@@ -81,6 +97,9 @@
                 "Não foi possível realizar login. Verifique email e senha",
                 Severity.Error);
         }
+
+        _loading = false;
+        StateHasChanged();
     }
 
     private async Task OnCreate()

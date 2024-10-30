@@ -11,7 +11,7 @@
 <MudTextField T="string"
               Value="_region"
               Placeholder="Região"
-              HelperText="Busque por regiões: Asia, Europa ..."
+              HelperText="Busque por regiões (inglês): Asia, Europe, North America, ..."
               Variant="Variant.Outlined"
               ValueChanged="OnLoadAsync"
               AdornmentIcon="@Icons.Material.Outlined.Search"
@@ -30,42 +30,6 @@ else
     @if (_countries.Count != 0)
     {
         //Exibir: Nome (Common e official), Capital, Languages, Region, Coordinates, Flags, Population
-        <MudList T="CountryModel">
-            @foreach (var countryModel in _countries)
-            {
-                <MudListItem T="CountryModel"
-                             OnClick="@(() => OnClick(countryModel))">
-                    <AvatarContent>
-                        <MudImage Src="@GetCountryImage(countryModel)"
-                                  Class="rounded-lg"
-                                  Height="100"
-                                  Width="100"
-                                  ObjectFit="ObjectFit.Cover">
-                        </MudImage>
-                    </AvatarContent>
-                    <ChildContent>
-                        <MudStack Class="ml-5">
-                            <MudText Typo="Typo.h6">@countryModel.Name.CommonName (@countryModel.Name.Official)</MudText>
-                            <MudStack Row="true"
-                                      Wrap="Wrap.Wrap">
-                                <MudChip T="string"
-                                         Variant="Variant.Text"
-                                         Color="Color.Info">
-                                    @countryModel.Region
-                                </MudChip>
-                                <MudChip T="string"
-                                         Variant="Variant.Text">
-                                    Capital: @countryModel.Capital.FirstOrDefault()
-                                </MudChip>
-                                <MudChip T="string"
-                                         Variant="Variant.Text">
-                                    População: @countryModel.Population
-                                </MudChip>
-                            </MudStack>
-                        </MudStack>
-                    </ChildContent>
-                </MudListItem>
-            }
-        </MudList>
+        <CountryList Countries="_countries"></CountryList>
     }
 }

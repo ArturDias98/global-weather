@@ -13,7 +13,9 @@ internal sealed class UserService(
     IUserRepository userRepository,
     ILogger<UserService> logger) : IUserService
 {
-    public async Task<ResultModel<UserModel>> GetUserByIdAsync(string userId, CancellationToken cancellationToken = default)
+    public async Task<ResultModel<UserModel>> GetUserByIdAsync(
+        string userId,
+        CancellationToken cancellationToken = default)
     {
         try
         {
@@ -26,6 +28,9 @@ internal sealed class UserService(
                 FavoriteCities = user.FavoriteCities.Select(i => new FavoriteCityModel
                 {
                     Id = i.Id,
+                    Name = i.Name,
+                    Country = i.Country,
+                    State = i.State,
                     Latitude = i.Latitude,
                     Longitude = i.Longitude
                 }).ToList(),

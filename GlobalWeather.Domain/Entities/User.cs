@@ -1,4 +1,5 @@
 using Amazon.DynamoDBv2.DataModel;
+using GlobalWeather.Shared.Comparers;
 
 namespace GlobalWeather.Domain.Entities;
 
@@ -18,8 +19,7 @@ public class User
     [DynamoDBProperty("FavoriteCountries")]
     public List<int> FavoriteCountries { get; set; } = [];
 
-    [DynamoDBProperty("FavoriteCities")] 
-    public List<FavoriteCity> FavoriteCities { get; set; } = [];
+    [DynamoDBProperty("FavoriteCities")] public List<FavoriteCity> FavoriteCities { get; set; } = [];
 
     public void Update(string email)
     {
@@ -42,17 +42,24 @@ public class User
     }
 
     public string AddCity(
+        string name,
+        string country,
+        string state,
         double latitude,
         double longitude)
     {
         if (FavoriteCities.Any(i =>
-                Math.Abs(i.Latitude - latitude) < CoordinateCompareTolerance &&
-                Math.Abs(i.Longitude - longitude) < CoordinateCompareTolerance))
+                CoordinateComparer.CompareCoordinates(i.Latitude, i.Longitude, latitude, longitude)))
         {
             return string.Empty;
         }
 
-        var create = FavoriteCity.Create(latitude, longitude);
+        var create = FavoriteCity.Create(
+            name,
+            country,
+            state,
+            latitude,
+            longitude);
         FavoriteCities.Add(create);
 
         return create.Id;
@@ -99,14 +106,23 @@ public class User
 public class FavoriteCity
 {
     public string Id { get; set; } = default!;
+    public string Name { get; set; } = string.Empty;
+    public string Country { get; set; } = string.Empty;
+    public string State { get; set; } = string.Empty;
     public double Latitude { get; set; }
     public double Longitude { get; set; }
 
     public static FavoriteCity Create(
+        string name,
+        string country,
+        string state,
         double latitude,
         double longitude) => new()
     {
         Id = Guid.NewGuid().ToString(),
+        Name = name,
+        Country = country,
+        State = state,
         Latitude = latitude,
         Longitude = longitude
     };

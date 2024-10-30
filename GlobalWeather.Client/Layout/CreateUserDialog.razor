@@ -4,14 +4,15 @@
 
 <MudDialog>
     <DialogContent>
-        <MudPaper Class="pa-5">
-            <MudForm @ref="_form">
+        <MudForm @ref="_form">
+            <MudStack>
                 <MudTextField T="string"
                               Label="Email"
                               Required="true"
                               RequiredError="O email é obrigatório"
                               @bind-Value="_email"
-                              InputType="InputType.Email">
+                              InputType="InputType.Email"
+                              Variant="Variant.Outlined">
                 </MudTextField>
                 <MudTextField T="string"
                               Label="Senha"
@@ -19,16 +20,18 @@
                               Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))"
                               RequiredError="A senha é obrigatória"
                               @bind-Value="_password"
-                              InputType="InputType.Password">
+                              InputType="InputType.Password"
+                              Variant="Variant.Outlined">
                 </MudTextField>
                 <MudTextField T="string"
                               Label="Senha"
                               HelperText="Repita a senha"
                               InputType="InputType.Password"
-                              Validation="@(new Func<string, string>(PasswordMatch))">
+                              Validation="@(new Func<string, string>(PasswordMatch))"
+                              Variant="Variant.Outlined">
                 </MudTextField>
-            </MudForm>
-        </MudPaper>
+            </MudStack>
+        </MudForm>
     </DialogContent>
     <DialogActions>
         <MudStack Row="true"
@@ -41,7 +44,16 @@
                        Color="Color.Info"
                        Style="text-transform: none"
                        OnClick="OnAdd">
-                Confirmar
+                @if (_loading)
+                {
+                    <MudProgressCircular Indeterminate="true"
+                                         Size="Size.Small">
+                    </MudProgressCircular>
+                }
+                else
+                {
+                    <MudText>Confirmar</MudText>
+                }
             </MudButton>
         </MudStack>
     </DialogActions>
@@ -51,6 +63,7 @@
     private MudForm _form = null!;
     private string _email = string.Empty;
     private string _password = string.Empty;
+    private bool _loading;
 
     private string PasswordMatch(string password)
     {
@@ -81,6 +94,9 @@
         {
             return;
         }
+
+        _loading = true;
+        StateHasChanged();
 
         var result = await UserService.CreateUserAsync(
             _email,
@@ -113,6 +129,9 @@
 
             Snackbar.Add(new MarkupString(message.ToString()), Severity.Error);
         }
+
+        _loading = false;
+        StateHasChanged();
     }
 
     [Inject] private IUserService UserService { get; set; } = null!;

@@ -1,0 +1,82 @@
+@page "/user"
+@using GlobalWeather.Shared.Models.Users
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize]
+
+@if (_loading)
+{
+    <MudStack Row="true"
+              Wrap="Wrap.Wrap"
+              Class="mt-16">
+        <MudProgressCircular Indeterminate="true"
+                             Size="Size.Small">
+        </MudProgressCircular>
+        <MudText Typo="Typo.h6">Carregando informações do usuário</MudText>
+    </MudStack>
+}
+else
+{
+    @if (_user is null)
+    {
+        <MudText Typo="Typo.h5">Não foi possível carregar informações sobre o usuário</MudText>
+    }
+    else
+    {
+        <MudStack Class="mt-5">
+            <MudText Typo="Typo.h5">Cidades Favoritas</MudText>
+            <MudList T="FavoriteCityModel">
+                @foreach (var city in _user.FavoriteCities)
+                {
+                <MudListItem T="FavoriteCityModel"
+                             OnClick="@(() => OnShowInfo(city))">
+                    <ChildContent>
+                        <MudStack Class="ml-5">
+                            <MudText Typo="Typo.h6">@city.Name</MudText>
+                            <MudStack Row="true"
+                                      Wrap="Wrap.Wrap">
+                                <MudChip T="string"
+                                         Variant="Variant.Text"
+                                         Color="Color.Info">
+                                    Estado: @city.State
+                                </MudChip>
+                                <MudChip T="string"
+                                         Variant="Variant.Text"
+                                         Color="Color.Info">
+                                    País: @city.Country
+                                </MudChip>
+                                <MudChip T="string"
+                                         Variant="Variant.Text">
+                                    Latitude: @city.Latitude.ToString("N3")
+                                </MudChip>
+                                <MudChip T="string"
+                                         Variant="Variant.Text">
+                                    Longitude: @city.Longitude.ToString("N3")
+                                </MudChip>
+                            </MudStack>
+                        </MudStack>
+                    </ChildContent>
+                </MudListItem>
+                }
+            </MudList>
+            <MudText Typo="Typo.h5">Países Favoritos</MudText>
+            @if (_loadingCountries)
+            {
+                <MudSkeleton Height="300px"
+                             Width="50%"
+                             Style="margin: 0 auto">
+                </MudSkeleton>
+            }
+            else
+            {
+                <CountryList Countries="_countries"
+                             IsReadOnly="false">
+                </CountryList>
+            }
+        </MudStack>
+    }
+}
+
+@code {
+
+}

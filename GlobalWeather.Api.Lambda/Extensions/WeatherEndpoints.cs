@@ -37,6 +37,28 @@ internal static class WeatherEndpoints
             .Produces<ResultModel<List<CityModel>>>()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound);
+        
+        app.MapGet("api/v1/weather/city/info", async (
+                [FromQuery(Name = "lat")] double latitude,
+                [FromQuery(Name = "lon")] double longitude,
+                [FromServices] IWeatherService service,
+                CancellationToken cancellationToken) =>
+            {
+                var result = await service.GetCityInformationAsync(
+                    latitude,
+                    longitude,
+                    cancellationToken);
+
+                return result.Success
+                    ? Results.Ok(result)
+                    : Results.NotFound(result);
+            })
+            .WithName("get-city-information")
+            .WithDescription("Return city information filtered by coordinates")
+            .WithTags("Weather")
+            .Produces<ResultModel<CityModel>>()
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound);
 
         app.MapGet("api/v1/weather/info", async (
                 [FromQuery(Name = "lat")] double latitude,
@@ -75,6 +97,9 @@ internal static class WeatherEndpoints
 
                 var result = await service.AddCityToFavoritesAsync(
                     id,
+                    model.Name,
+                    model.Country,
+                    model.State,
                     model.Latitude,
                     model.Longitude,
                     cancellationToken);

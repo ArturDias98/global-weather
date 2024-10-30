@@ -1,5 +1,6 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
+using Amazon.DynamoDBv2.DocumentModel;
 using GlobalWeather.Domain.Entities;
 using GlobalWeather.Domain.Repositories;
 using Microsoft.Extensions.Logging;
@@ -10,12 +11,13 @@ internal sealed class UserRepository(IDynamoDBContext context) : IUserRepository
 {
     public async Task<bool> IsEmailUniqueAsync(string email, CancellationToken cancellationToken = default)
     {
-        //TODO: Improve this query
+        var scan = new ScanCondition("Email", ScanOperator.Equal, email);
+
         var users = await context
-            .ScanAsync<User>(new List<ScanCondition>())
+            .ScanAsync<User>([scan])
             .GetRemainingAsync(cancellationToken);
         
-        return users.All(i => i.Email != email);
+        return users?.Count == 0;
     }
 
     public Task<User> GetUserByIdAsync(string userId, CancellationToken cancellationToken = default)
@@ -25,12 +27,13 @@ internal sealed class UserRepository(IDynamoDBContext context) : IUserRepository
 
     public async Task<User> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
-        //TODO: Improve this query
+        var scan = new ScanCondition("Email", ScanOperator.Equal, email);
+        
         var users = await context
-            .ScanAsync<User>(new List<ScanCondition>())
+            .ScanAsync<User>([scan])
             .GetRemainingAsync(cancellationToken);
         
-        return users.First(i => i.Email == email);
+        return users.Single();
     }
 
     public Task DeleteUserAsync(string id, CancellationToken cancellationToken = default)

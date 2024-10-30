@@ -1,53 +1,143 @@
+@using GlobalWeather.Client.Services
+@using GlobalWeather.Shared.Contracts
 @using GlobalWeather.Shared.Models.Countries
+@using GlobalWeather.Shared.Models.Users
 <MudDialog>
     <DialogContent>
-        <MudStack Row="true"
-                  Wrap="Wrap.Wrap"
-                  Justify="Justify.Center">
-            <MudImage Src="@GetCountryImage(Model)"
-                      Class="rounded-lg"
-                      Height="150"
-                      Width="150"
-                      ObjectFit="ObjectFit.Cover">
-            </MudImage>
-            <MudPaper Class="pa-5"
-                      Elevation="0">
-                <MudStack>
-                    <MudText Typo="Typo.h5">
-                        @Model.Name.CommonName (@Model.Name.Official)
-                    </MudText>
-                    <MudText Typo="Typo.h6">Região: @Model.Region</MudText>
-                    <MudText Typo="Typo.h6">Capital: @Model.Capital.First()</MudText>
-                    <MudText Typo="Typo.h6">População: @Model.Population</MudText>
-                    <MudText Typo="Typo.h6">Línguas</MudText>
-                    <MudStack Row="true"
-                              Wrap="Wrap.Wrap">
-                        @foreach (var lang in Model.Languages)
-                        {
-                            <MudChip T="string">@lang.Value</MudChip>
-                        }
+        @if (_loading)
+        {
+            <MudSkeleton SkeletonType="SkeletonType.Rectangle"
+                         Width="250px"
+                         Height="300px"
+                         Style="margin: 0 auto">
+            </MudSkeleton>
+        }
+        else
+        {
+            <MudStack Row="true"
+                      Wrap="Wrap.Wrap"
+                      Justify="Justify.Center">
+                <MudImage Src="@GetCountryImage(Model)"
+                          Class="rounded-lg"
+                          Height="150"
+                          Width="150"
+                          ObjectFit="ObjectFit.Cover">
+                </MudImage>
+                <MudPaper Class="pa-5"
+                          Elevation="0">
+                    <MudStack>
+                        <MudText Typo="Typo.h5">
+                            @Model.Name.CommonName (@Model.Name.Official)
+                        </MudText>
+                        <MudText Typo="Typo.h6">Região: @Model.Region</MudText>
+                        <MudText Typo="Typo.h6">Capital: @Model.Capital.First()</MudText>
+                        <MudText Typo="Typo.h6">População: @Model.Population</MudText>
+                        <MudText Typo="Typo.h6">Línguas</MudText>
+                        <MudStack Row="true"
+                                  Wrap="Wrap.Wrap">
+                            @foreach (var lang in Model.Languages)
+                            {
+                                <MudChip T="string">@lang.Value</MudChip>
+                            }
+                        </MudStack>
+                        <MudText Typo="Typo.h6">Continentes</MudText>
+                        <MudStack Row="true"
+                                  Wrap="Wrap.Wrap">
+                            @foreach (var continent in Model.Continents)
+                            {
+                                <MudChip T="string">@continent</MudChip>
+                            }
+                        </MudStack>
                     </MudStack>
-                    <MudText Typo="Typo.h6">Continentes</MudText>
-                    <MudStack Row="true"
-                              Wrap="Wrap.Wrap">
-                        @foreach (var continent in Model.Continents)
-                        {
-                            <MudChip T="string">@continent</MudChip>
-                        }
-                    </MudStack>
-                </MudStack>
-            </MudPaper>
-        </MudStack>
+                </MudPaper>
+            </MudStack>
+        }
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="() => Dialog.Close()"
-                   Style="text-transform: none">
-            Fechar
-        </MudButton>
+        <MudStack Row="true"
+                  Wrap="Wrap.Wrap">
+            <MudButton OnClick="() => Dialog.Close()"
+                       Style="text-transform: none">
+                Fechar
+            </MudButton>
+            <AuthorizeView>
+                @if (_userModel is not null)
+                {
+                    @if (CanAddToFavorites)
+                    {
+                        <MudTooltip Text="Adicionar aos favoritos">
+                            <MudIconButton Icon="@Icons.Material.Filled.Favorite"
+                                           Color="Color.Secondary"
+                                           OnClick="AddCountryToFavorites">
+                            </MudIconButton>
+                        </MudTooltip>
+                    }
+                    else
+                    {
+                        {
+                            <MudTooltip Text="Remover dos favoritos">
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                               Color="Color.Error"
+                                               OnClick="RemoveCountryFromFavorites">
+                                </MudIconButton>
+                            </MudTooltip>
+                        }
+                    }   
+                }
+            </AuthorizeView>
+        </MudStack>
     </DialogActions>
 </MudDialog>
 
 @code {
+    private bool _loading = true;
+    private UserModel? _userModel;
+
+    private bool CanAddToFavorites => _userModel?.FavoriteCountries.Contains(Model.Code) == false;
+
+    private async Task AddCountryToFavorites()
+    {
+        var result = await CountryService.AddCountryToFavoritesAsync(
+            Model.Code,
+            "");
+
+        Snackbar.Clear();
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomCenter;
+        
+        if (result.Success)
+        {
+            Snackbar.Add("País adicionado aos favoritos", Severity.Success);
+            _userModel!.FavoriteCountries.Add(Model.Code);
+        }
+        else
+        {
+            Snackbar.Add("Não foi possível adicionar o país aos favoritos", Severity.Error);
+        }
+        
+        StateHasChanged();
+    }
+    
+    private async Task RemoveCountryFromFavorites()
+    {
+        var result = await CountryService.RemoveCountryFromFavoritesAsync(
+            Model.Code,
+            "");
+
+        Snackbar.Clear();
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomCenter;
+        
+        if (result.Success)
+        {
+            Snackbar.Add("País removido dos favoritos", Severity.Success);
+            _userModel!.FavoriteCountries.Remove(Model.Code);
+        }
+        else
+        {
+            Snackbar.Add("Não foi possível remover o país dos favoritos", Severity.Error);
+        }
+        
+        StateHasChanged();
+    }
 
     private static string GetCountryImage(CountryModel country)
     {
@@ -55,6 +145,20 @@
             ? image
             : string.Empty;
     }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _userModel = await AuthService.GetUserAsync();
+            _loading = false;
+            StateHasChanged();
+        }
+    }
+
+    [Inject] private ICountryService CountryService { get; set; } = null!;
+    [Inject] private ISnackbar Snackbar { get; set; } = null!;
+    [Inject] private AuthService AuthService { get; set; } = null!;
 
     [Parameter] [EditorRequired] public CountryModel Model { get; set; } = null!;
     [CascadingParameter] private MudDialogInstance Dialog { get; set; } = null!;

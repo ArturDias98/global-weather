@@ -63,13 +63,15 @@ internal sealed class CountryService(
     {
         try
         {
-            var token = await localStorage.GetItemAsStringAsync("token", cancellationToken);
+            var token = await localStorage.GetItemAsync<string>("token", cancellationToken);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var result = await client.PutAsync(
                 code.ToString(),
                 null,
                 cancellationToken);
 
+            result.EnsureSuccessStatusCode();
+            
             var content = await result.Content.ReadFromJsonAsync<ResultModel<int>>(cancellationToken);
 
             return content ?? ResultModel<int>.ErrorResult("Couldn't add country to favorites");
@@ -92,7 +94,7 @@ internal sealed class CountryService(
     {
         try
         {
-            var token = await localStorage.GetItemAsStringAsync("token", cancellationToken);
+            var token = await localStorage.GetItemAsync<string>("token", cancellationToken);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             
             var result = await client.DeleteAsync(

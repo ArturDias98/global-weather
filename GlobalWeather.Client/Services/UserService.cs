@@ -59,6 +59,11 @@ internal class UserService(
         }
     }
 
+    public Task<ResultModel<string>> DeleteUserAsync(string id, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<ResultModel<string>> LoginAsync(
         string email,
         string password,

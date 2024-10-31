@@ -8,7 +8,6 @@
 @inject AuthService AuthService
 @inject IDialogService DialogService
 @inject IWebAssemblyHostEnvironment Environment
-@inject IJSRuntime JsRuntime
 
 <MudThemeProvider IsDarkMode="true"/>
 <MudPopoverProvider/>
@@ -17,10 +16,7 @@
 
 <MudLayout>
     <MudAppBar Elevation="1">
-        <MudButton Variant="Variant.Text"
-                   OnClick="@(() => JsRuntime.InvokeVoidAsync("history.back"))">
-            <MudText Typo="Typo.h5" Class="ml-3">GloboClima</MudText>
-        </MudButton>
+        <MudText Typo="Typo.h5" Class="ml-3">GloboClima</MudText>
         <MudSpacer/>
         <MudIconButton Icon="@Icons.Custom.Brands.GitHub"
                        Href="https://github.com/ArturDias98/global-weather"

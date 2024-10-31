@@ -111,6 +111,12 @@ internal sealed class WeatherService(
         try
         {
             var user = await userRepository.GetUserByIdAsync(userId, cancellationToken);
+            
+            if (user is null)
+            {
+                return ResultModel<string>.ErrorResult("User not found");
+            }
+            
             var id = user.AddCity(
                 name,
                 country,
@@ -141,6 +147,12 @@ internal sealed class WeatherService(
         try
         {
             var user = await userRepository.GetUserByIdAsync(userId, cancellationToken);
+            
+            if (user is null)
+            {
+                return ResultModel<string>.ErrorResult("User not found");
+            }
+            
             user.RemoveCity(id);
 
             await userRepository.SaveUserAsync(user, cancellationToken);

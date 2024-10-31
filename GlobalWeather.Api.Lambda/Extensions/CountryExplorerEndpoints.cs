@@ -3,6 +3,7 @@ using GlobalWeather.Shared.Contracts;
 using GlobalWeather.Shared.Models;
 using GlobalWeather.Shared.Models.Countries;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 
 namespace GlobalWeather.Api.Lambda.Extensions;
 
@@ -54,6 +55,7 @@ internal static class CountryExplorerEndpoints
             .WithName("get-country-by-code")
             .WithDescription("Returns country with a specific code")
             .WithTags("Country")
+            .CacheOutput(cfg => cfg.Expire(TimeSpan.FromMinutes(2)))
             .Produces<ResultModel<CountryModel>>()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound);
@@ -66,6 +68,7 @@ internal static class CountryExplorerEndpoints
         app.MapPut("api/v1/country/{code:int}", async (
                 [FromRoute(Name = "code")] int code,
                 [FromServices] ICountryService service,
+                [FromServices] IOutputCacheStore outputCacheStore,
                 ClaimsPrincipal claims,
                 CancellationToken cancellationToken) =>
             {
@@ -76,6 +79,13 @@ internal static class CountryExplorerEndpoints
                     id,
                     cancellationToken);
 
+                if (result.Success)
+                {
+                    await outputCacheStore.EvictByTagAsync(
+                        "get-user",
+                        cancellationToken);
+                }
+                
                 return result.Success
                     ? Results.Ok(result)
                     : Results.BadRequest(result);
@@ -96,6 +106,7 @@ internal static class CountryExplorerEndpoints
         app.MapDelete("api/v1/country/{code:int}", async (
                 [FromRoute(Name = "code")] int code,
                 [FromServices] ICountryService service,
+                [FromServices] IOutputCacheStore outputCacheStore,
                 ClaimsPrincipal claims,
                 CancellationToken cancellationToken) =>
             {
@@ -106,6 +117,13 @@ internal static class CountryExplorerEndpoints
                     id,
                     cancellationToken);
 
+                if (result.Success)
+                {
+                    await outputCacheStore.EvictByTagAsync(
+                        "get-user",
+                        cancellationToken);
+                }
+                
                 return result.Success
                     ? Results.Ok(result)
                     : Results.BadRequest(result);

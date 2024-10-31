@@ -3,7 +3,23 @@
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
-            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)"/>
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                <NotAuthorized>
+                    <MudAlert Severity="Severity.Error"
+                              Class="mt-16"
+                              ContentAlignment="HorizontalAlignment.Center">
+                        Usuário não autorizado
+                    </MudAlert>
+                </NotAuthorized>
+                <Authorizing>
+                    <MudStack Class="mt-16"
+                              Row="true"
+                              Wrap="Wrap.Wrap">
+                        <MudProgressCircular Indeterminate="true"></MudProgressCircular>
+                        <MudText Typo="Typo.h5">Autenticando usuário</MudText>
+                    </MudStack>
+                </Authorizing>
+            </AuthorizeRouteView>
             <FocusOnNavigate RouteData="@routeData" Selector="h1"/>
         </Found>
         <NotFound>

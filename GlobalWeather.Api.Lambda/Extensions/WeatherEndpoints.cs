@@ -3,6 +3,7 @@ using GlobalWeather.Shared.Contracts;
 using GlobalWeather.Shared.Models;
 using GlobalWeather.Shared.Models.Weather;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 
 namespace GlobalWeather.Api.Lambda.Extensions;
 
@@ -37,7 +38,7 @@ internal static class WeatherEndpoints
             .Produces<ResultModel<List<CityModel>>>()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound);
-        
+
         app.MapGet("api/v1/weather/city/info", async (
                 [FromQuery(Name = "lat")] double latitude,
                 [FromQuery(Name = "lon")] double longitude,
@@ -90,6 +91,7 @@ internal static class WeatherEndpoints
         app.MapPut("api/v1/weather", async (
                 [FromBody] AddWeatherModel model,
                 [FromServices] IWeatherService service,
+                [FromServices] IOutputCacheStore outputCacheStore,
                 ClaimsPrincipal claims,
                 CancellationToken cancellationToken) =>
             {
@@ -103,6 +105,13 @@ internal static class WeatherEndpoints
                     model.Latitude,
                     model.Longitude,
                     cancellationToken);
+
+                if (result.Success)
+                {
+                    await outputCacheStore.EvictByTagAsync(
+                        "get-user",
+                        cancellationToken);
+                }
 
                 return result.Success
                     ? Results.Ok(result)
@@ -124,6 +133,7 @@ internal static class WeatherEndpoints
         app.MapDelete("api/v1/weather/{cityId}", async (
                 [FromRoute(Name = "cityId")] string cityId,
                 [FromServices] IWeatherService service,
+                [FromServices] IOutputCacheStore outputCacheStore,
                 ClaimsPrincipal claims,
                 CancellationToken cancellationToken) =>
             {
@@ -133,6 +143,13 @@ internal static class WeatherEndpoints
                     id,
                     cityId,
                     cancellationToken);
+
+                if (result.Success)
+                {
+                    await outputCacheStore.EvictByTagAsync(
+                        "get-user",
+                        cancellationToken);
+                }
 
                 return result.Success
                     ? Results.Ok(result)

@@ -62,16 +62,22 @@ internal sealed class CountryService(
         try
         {
             var user = await userRepository.GetUserByIdAsync(userId, cancellationToken);
+
+            if (user is null)
+            {
+                return ResultModel<int>.ErrorResult("User not found");
+            }
+
             user.AddCountry(code);
-            
+
             await userRepository.SaveUserAsync(user, cancellationToken);
-            
+
             return ResultModel<int>.SuccessResult(code);
         }
         catch (Exception e)
         {
             logger.LogError("Error on add country {code} to user {id}. Error: {message}",
-                code, 
+                code,
                 userId,
                 e.ToString());
             return ResultModel<int>.ErrorResult("Could not add country to favorites");
@@ -86,16 +92,22 @@ internal sealed class CountryService(
         try
         {
             var user = await userRepository.GetUserByIdAsync(userId, cancellationToken);
+            
+            if (user is null)
+            {
+                return ResultModel<int>.ErrorResult("User not found");
+            }
+            
             user.RemoveCountry(code);
-            
+
             await userRepository.SaveUserAsync(user, cancellationToken);
-            
+
             return ResultModel<int>.SuccessResult(code);
         }
         catch (Exception e)
         {
             logger.LogError("Error on remove country {code} from user {id}. Error: {message}",
-                code, 
+                code,
                 userId,
                 e.ToString());
             return ResultModel<int>.ErrorResult("Could not remove country from favorites");

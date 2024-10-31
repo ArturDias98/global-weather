@@ -1,11 +1,18 @@
+using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text.Json;
 using Blazored.LocalStorage;
+using GlobalWeather.Shared.Models;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using static GlobalWeather.Client.ServerHelper;
 
 namespace GlobalWeather.Client;
 
-public class CustomAuthStateProvider(ILocalStorageService localStorage) : AuthenticationStateProvider
+public class CustomAuthStateProvider(
+    IHttpClientFactory factory,
+    IWebAssemblyHostEnvironment environment,
+    ILocalStorageService localStorage) : AuthenticationStateProvider
 {
     private static IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
     {
@@ -33,7 +40,7 @@ public class CustomAuthStateProvider(ILocalStorageService localStorage) : Authen
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        var token = await localStorage.GetItemAsStringAsync("token");
+        var token = await localStorage.GetItemAsync<string>("token");
 
         var identity = new ClaimsIdentity();
 
@@ -41,6 +48,21 @@ public class CustomAuthStateProvider(ILocalStorageService localStorage) : Authen
         {
             try
             {
+                using var client = factory.CreateClient();
+                client.BaseAddress = new Uri(GetServerUrl(environment));
+
+                var post = await client.PostAsJsonAsync(
+                    "api/v1/user/validate",
+                    token);
+
+                var result = await post.Content.ReadFromJsonAsync<ResultModel<bool>>()
+                             ?? throw new Exception("Could not validate token");
+
+                if (!result.Result)
+                {
+                    throw new Exception("Invalid token");
+                }
+
                 identity = new ClaimsIdentity(ParseClaimsFromJwt(token), "Bearer");
             }
             catch (Exception)

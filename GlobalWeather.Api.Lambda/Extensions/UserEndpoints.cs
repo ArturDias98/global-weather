@@ -5,6 +5,7 @@ using GlobalWeather.Shared.Contracts;
 using GlobalWeather.Shared.Models;
 using GlobalWeather.Shared.Models.Users;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 
 namespace GlobalWeather.Api.Lambda.Extensions;
 
@@ -14,7 +15,8 @@ internal static class UserEndpoints
     {
         return app
             .MapGetEndpoints()
-            .MapPostEndpoints();
+            .MapPostEndpoints()
+            .MapDeleteEndpoints();
     }
 
     private static WebApplication MapGetEndpoints(this WebApplication app)
@@ -32,9 +34,11 @@ internal static class UserEndpoints
             .WithName("get-user-by-id")
             .WithDescription("Get user by id")
             .WithTags("User")
+            .CacheOutput(cfg => cfg.Expire(TimeSpan.FromMinutes(5)).Tag("get-user"))
             .Produces<ResultModel<UserModel>>()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound);
+
         return app;
     }
 
@@ -85,6 +89,51 @@ internal static class UserEndpoints
             })
             .WithName("login")
             .WithDescription("Execute user authentication and return Jwt Token")
+            .WithTags("User")
+            .Produces<ResultModel<string>>()
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest);
+
+        app.MapPost("api/v1/user/validate", (
+                [FromBody] string token,
+                [FromServices] TokenService service) =>
+            {
+                var isValid = service.ValidateToken(token);
+
+                return ResultModel<bool>.SuccessResult(isValid);
+            })
+            .WithName("validate-user-token")
+            .WithDescription("Validate user token")
+            .WithTags("User")
+            .Produces<ResultModel<bool>>()
+            .Produces(StatusCodes.Status200OK);
+
+        return app;
+    }
+
+    private static WebApplication MapDeleteEndpoints(this WebApplication app)
+    {
+        app.MapDelete("api/v1/user/{id}", async (
+                [FromRoute] string id,
+                [FromServices] IUserService service,
+                [FromServices] IOutputCacheStore outputCacheStore,
+                CancellationToken cancellationToken) =>
+            {
+                var result = await service.DeleteUserAsync(id, cancellationToken);
+
+                if (result.Success)
+                {
+                    await outputCacheStore.EvictByTagAsync(
+                        "get-user",
+                        cancellationToken);
+                }
+                
+                return result.Success
+                    ? Results.Ok(result)
+                    : Results.NotFound(result);
+            })
+            .WithName("delete-user")
+            .WithDescription("Delete user and return user identification")
             .WithTags("User")
             .Produces<ResultModel<string>>()
             .Produces(StatusCodes.Status200OK)

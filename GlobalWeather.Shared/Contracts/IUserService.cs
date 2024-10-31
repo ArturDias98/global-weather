@@ -13,6 +13,10 @@ public interface IUserService
         string email,
         string password,
         CancellationToken cancellationToken = default);
+    
+    Task<ResultModel<string>> DeleteUserAsync(
+        string id,
+        CancellationToken cancellationToken = default);
 
     Task<ResultModel<string>> LoginAsync(
         string email,

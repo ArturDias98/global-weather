@@ -46,6 +46,26 @@ public class UserServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task Should_Delete_User()
+    {
+        var create = await TestDatabaseHelper.CreateUserAsync(
+            "email@email.com",
+            "password123456",
+            _factory);
+
+        var service = _factory.Services.GetRequiredService<IUserService>();
+        var delete = await service.DeleteUserAsync(create.Id);
+
+        var user = await service.GetUserByIdAsync(delete.Result ?? string.Empty);
+
+        Assert.True(delete.Success);
+        Assert.NotNull(delete.Result);
+        Assert.Equal(delete.Result, create.Id);
+        Assert.False(user.Success);
+        Assert.Null(user.Result);
+    }
+
+    [Fact]
     public async Task Should_Login()
     {
         const string email = "email@email.com";

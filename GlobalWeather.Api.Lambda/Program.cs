@@ -8,6 +8,7 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddOutputCache();
 builder.Services
     .AddApiServices()
     .AddInfrastructure(
@@ -56,6 +57,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseOutputCache();
 app.UseAuthentication();
 app.UseAuthorization();
 

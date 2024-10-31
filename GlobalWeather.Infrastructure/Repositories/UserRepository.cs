@@ -20,9 +20,9 @@ internal sealed class UserRepository(IDynamoDBContext context) : IUserRepository
         return users?.Count == 0;
     }
 
-    public Task<User> GetUserByIdAsync(string userId, CancellationToken cancellationToken = default)
+    public Task<User?> GetUserByIdAsync(string userId, CancellationToken cancellationToken = default)
     {
-        return context.LoadAsync<User>(userId, cancellationToken);
+        return context.LoadAsync<User?>(userId, cancellationToken);
     }
 
     public async Task<User> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default)

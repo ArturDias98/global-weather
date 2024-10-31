@@ -19,13 +19,19 @@ internal sealed class UserService(
     {
         try
         {
-            var user = await userRepository.GetUserByIdAsync(userId, cancellationToken);
+            var get = await userRepository.GetUserByIdAsync(userId, cancellationToken);
+            
+            if (get is null)
+            {
+                return ResultModel<UserModel>.ErrorResult("Could not find user by id");
+            }
+            
             var parse = new UserModel
             {
-                Id = user.Id,
-                Email = user.Email,
-                FavoriteCountries = user.FavoriteCountries,
-                FavoriteCities = user.FavoriteCities.Select(i => new FavoriteCityModel
+                Id = get.Id,
+                Email = get.Email,
+                FavoriteCountries = get.FavoriteCountries,
+                FavoriteCities = get.FavoriteCities.Select(i => new FavoriteCityModel
                 {
                     Id = i.Id,
                     Name = i.Name,
@@ -83,6 +89,29 @@ internal sealed class UserService(
         {
             logger.LogError("Error on create user entity. Error: {message}", e.ToString());
             return ResultModel<string>.ErrorResult("Error on create user");
+        }
+    }
+
+    public async Task<ResultModel<string>> DeleteUserAsync(string id, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var user = await userRepository.GetUserByIdAsync(id, cancellationToken);
+            
+            if (user is null)
+            {
+                return ResultModel<string>.ErrorResult("User not available for deletion");
+            }
+            
+            await userRepository.DeleteUserAsync(id, cancellationToken);
+            return ResultModel<string>.SuccessResult(id);
+        }
+        catch (Exception e)
+        {
+            logger.LogError("Error on delete user {id}. Error: {error}",
+                id,
+                e.ToString());
+            return ResultModel<string>.ErrorResult("Error on delete user");
         }
     }
 

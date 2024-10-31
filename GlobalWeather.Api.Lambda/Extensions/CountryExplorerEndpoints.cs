@@ -55,7 +55,7 @@ internal static class CountryExplorerEndpoints
             .WithName("get-country-by-code")
             .WithDescription("Returns country with a specific code")
             .WithTags("Country")
-            .CacheOutput(cfg => cfg.Expire(TimeSpan.FromMinutes(2)))
+            //.CacheOutput(cfg => cfg.Expire(TimeSpan.FromMinutes(2)))
             .Produces<ResultModel<CountryModel>>()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound);

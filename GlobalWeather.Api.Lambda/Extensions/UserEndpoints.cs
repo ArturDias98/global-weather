@@ -34,7 +34,7 @@ internal static class UserEndpoints
             .WithName("get-user-by-id")
             .WithDescription("Get user by id")
             .WithTags("User")
-            .CacheOutput(cfg => cfg.Expire(TimeSpan.FromMinutes(5)).Tag("get-user"))
+            //.CacheOutput(cfg => cfg.Expire(TimeSpan.FromMinutes(5)).Tag("get-user"))
             .Produces<ResultModel<UserModel>>()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound);

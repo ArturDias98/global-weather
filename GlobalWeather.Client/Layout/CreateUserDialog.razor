@@ -12,7 +12,9 @@
                               RequiredError="O email é obrigatório"
                               @bind-Value="_email"
                               InputType="InputType.Email"
-                              Variant="Variant.Outlined">
+                              Variant="Variant.Outlined"
+                              Immediate="true"
+                              OnKeyDown="OnEnter">
                 </MudTextField>
                 <MudTextField T="string"
                               Label="Senha"
@@ -21,14 +23,18 @@
                               RequiredError="A senha é obrigatória"
                               @bind-Value="_password"
                               InputType="InputType.Password"
-                              Variant="Variant.Outlined">
+                              Variant="Variant.Outlined"
+                              Immediate="true"
+                              OnKeyDown="OnEnter">
                 </MudTextField>
                 <MudTextField T="string"
                               Label="Senha"
                               HelperText="Repita a senha"
                               InputType="InputType.Password"
                               Validation="@(new Func<string, string>(PasswordMatch))"
-                              Variant="Variant.Outlined">
+                              Variant="Variant.Outlined"
+                              Immediate="true"
+                              OnKeyDown="OnEnter">
                 </MudTextField>
             </MudStack>
         </MudForm>
@@ -84,6 +90,11 @@
         {
             yield return "A senha deve conter no mínimo 6 caracteres";
         }
+    }
+    
+    private Task OnEnter(KeyboardEventArgs args)
+    {
+        return args.Key == "Enter" ? OnAdd() : Task.CompletedTask;
     }
 
     private async Task OnAdd()

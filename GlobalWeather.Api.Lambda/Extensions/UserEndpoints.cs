@@ -1,16 +1,17 @@
 using GlobalWeather.Api.Lambda.Services;
-using GlobalWeather.Domain.Entities;
-using GlobalWeather.Domain.Repositories;
 using GlobalWeather.Shared.Contracts;
 using GlobalWeather.Shared.Models;
 using GlobalWeather.Shared.Models.Users;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
+using Microsoft.OpenApi.Models;
 
 namespace GlobalWeather.Api.Lambda.Extensions;
 
 internal static class UserEndpoints
 {
+    private const string TagName = "User";
+
     public static WebApplication MapUserEndpoints(this WebApplication app)
     {
         return app
@@ -32,12 +33,31 @@ internal static class UserEndpoints
                     : Results.NotFound(result);
             })
             .WithName("get-user-by-id")
-            .WithDescription("Get user by id")
-            .WithTags("User")
             //.CacheOutput(cfg => cfg.Expire(TimeSpan.FromMinutes(5)).Tag("get-user"))
-            .Produces<ResultModel<UserModel>>()
-            .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status404NotFound);
+            .Produces<ResultModel<UserModel>>(StatusCodes.Status200OK, "application/json")
+            .Produces<ResultModel<UserModel>>(StatusCodes.Status404NotFound, "application/json")
+            .WithOpenApi(x => new OpenApiOperation(x)
+            {
+                Description = "Get user using identifier",
+                Summary = "Get user by id",
+                Tags =
+                [
+                    new OpenApiTag
+                    {
+                        Name = TagName
+                    }
+                ],
+                Parameters =
+                [
+                    new OpenApiParameter
+                    {
+                        Name = "id",
+                        Description = "User identifier",
+                        Required = true,
+                        In = ParameterLocation.Path
+                    },
+                ],
+            });
 
         return app;
     }
@@ -63,11 +83,20 @@ internal static class UserEndpoints
                 return Results.Ok(ResultModel<string>.SuccessResult(token));
             })
             .WithName("create-user")
-            .WithDescription("Create user and return Jwt Token for authentication")
-            .WithTags("User")
-            .Produces<ResultModel<string>>()
-            .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest);
+            .Produces<ResultModel<string>>(StatusCodes.Status200OK, "application/json")
+            .Produces<ResultModel<string>>(StatusCodes.Status400BadRequest, "application/json")
+            .WithOpenApi(x => new OpenApiOperation(x)
+            {
+                Description = "Create user and return Jwt Token for authentication",
+                Summary = "Create user",
+                Tags =
+                [
+                    new OpenApiTag
+                    {
+                        Name = TagName
+                    }
+                ]
+            });
 
         app.MapPost("api/v1/user/login", async (
                 [FromBody] LoginModel model,
@@ -88,11 +117,20 @@ internal static class UserEndpoints
                 return Results.Ok(ResultModel<string>.SuccessResult(token));
             })
             .WithName("login")
-            .WithDescription("Execute user authentication and return Jwt Token")
-            .WithTags("User")
-            .Produces<ResultModel<string>>()
-            .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest);
+            .Produces<ResultModel<string>>(StatusCodes.Status200OK, "application/json")
+            .Produces<ResultModel<string>>(StatusCodes.Status400BadRequest, "application/json")
+            .WithOpenApi(x => new OpenApiOperation(x)
+            {
+                Description = "Execute user authentication and return Jwt Token",
+                Summary = "User login",
+                Tags =
+                [
+                    new OpenApiTag
+                    {
+                        Name = TagName
+                    }
+                ]
+            });
 
         app.MapPost("api/v1/user/validate", (
                 [FromBody] string token,
@@ -103,10 +141,19 @@ internal static class UserEndpoints
                 return ResultModel<bool>.SuccessResult(isValid);
             })
             .WithName("validate-user-token")
-            .WithDescription("Validate user token")
-            .WithTags("User")
-            .Produces<ResultModel<bool>>()
-            .Produces(StatusCodes.Status200OK);
+            .Produces<ResultModel<bool>>(StatusCodes.Status200OK, "application/json")
+            .WithOpenApi(x => new OpenApiOperation(x)
+            {
+                Description = "Validate user token",
+                Summary = "User token validator",
+                Tags =
+                [
+                    new OpenApiTag
+                    {
+                        Name = TagName
+                    }
+                ]
+            });
 
         return app;
     }
@@ -127,17 +174,36 @@ internal static class UserEndpoints
                         "get-user",
                         cancellationToken);
                 }
-                
+
                 return result.Success
                     ? Results.Ok(result)
                     : Results.NotFound(result);
             })
             .WithName("delete-user")
-            .WithDescription("Delete user and return user identification")
-            .WithTags("User")
-            .Produces<ResultModel<string>>()
-            .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest);
+            .Produces<ResultModel<string>>(StatusCodes.Status200OK, "application/json")
+            .Produces<ResultModel<string>>(StatusCodes.Status400BadRequest, "application/json")
+            .WithOpenApi(x => new OpenApiOperation(x)
+            {
+                Description = "Delete user and return user identification",
+                Summary = "Delete use by id",
+                Tags =
+                [
+                    new OpenApiTag
+                    {
+                        Name = TagName
+                    }
+                ],
+                Parameters =
+                [
+                    new OpenApiParameter
+                    {
+                        Name = "id",
+                        Description = "User identifier",
+                        Required = true,
+                        In = ParameterLocation.Path
+                    },
+                ],
+            });
 
         return app;
     }

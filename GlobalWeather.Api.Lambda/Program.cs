@@ -4,6 +4,7 @@ using GlobalWeather.Infrastructure;
 using GlobalWeather.Api.Lambda.Extensions;
 using GlobalWeather.Api.Lambda;
 using System.Text;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,7 +37,35 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description =
+            "JWT Authorization Header - Bearer Authentication.\r\n\r\n" +
+            "Enter 'Bearer' [space] and then your token in the field below.\r\n\r\n" +
+            "Example (enter without the quotes): 'Bearer 12345abcdef'",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 builder.Services.AddCors(opt =>
     opt.AddDefaultPolicy(policy => policy
         .AllowAnyOrigin()
@@ -48,7 +77,11 @@ builder.Services.AddCors(opt =>
 builder.Services.AddAWSLambdaHosting(LambdaEventSource.RestApi);
 
 var app = builder.Build();
+
 app.UseCors();
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 if (app.Environment.IsDevelopment())
 {
@@ -61,12 +94,10 @@ app.UseOutputCache();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapGet("api/v1/health", () => Results.Ok("Healthy"));
+app.MapGet("api/v1/health", () => Results.Ok("Healthy"))
+    .WithTags("Health checks");
 app.MapCountryEndpoints()
     .MapWeatherEndpoints()
     .MapUserEndpoints();
-
-app.UseSwagger();
-app.UseSwaggerUI();
 
 app.Run();

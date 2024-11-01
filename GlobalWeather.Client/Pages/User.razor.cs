@@ -82,7 +82,7 @@ public partial class User : ComponentBase, IDisposable
 
             if (_user is { } user)
             {
-                LoadCountries(user.FavoriteCountries);
+                await LoadCountries(user.FavoriteCountries);
             }
 
             _loading = false;

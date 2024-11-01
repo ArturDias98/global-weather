@@ -11,7 +11,9 @@
                               RequiredError="Informe um email válido"
                               @bind-Value="_email"
                               InputType="InputType.Email"
-                              Variant="Variant.Outlined">
+                              Variant="Variant.Outlined"
+                              Immediate="true"
+                              OnKeyDown="OnEnter">
                 </MudTextField>
                 <MudTextField T="string"
                               Label="Senha"
@@ -19,7 +21,9 @@
                               RequiredError="Informe a senha"
                               @bind-Value="_password"
                               InputType="InputType.Password"
-                              Variant="Variant.Outlined">
+                              Variant="Variant.Outlined"
+                              Immediate="true"
+                              OnKeyDown="OnEnter">
                 </MudTextField>
                 <MudButton Variant="Variant.Text"
                            Style="text-transform: none"
@@ -63,6 +67,11 @@
     private string _email = string.Empty;
     private string _password = string.Empty;
     private bool _loading;
+
+    private Task OnEnter(KeyboardEventArgs args)
+    {
+        return args.Key == "Enter" ? OnLogin() : Task.CompletedTask;
+    }
 
     private async Task OnLogin()
     {

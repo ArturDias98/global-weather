@@ -4,11 +4,14 @@ using GlobalWeather.Shared.Models;
 using GlobalWeather.Shared.Models.Weather;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
+using Microsoft.OpenApi.Models;
 
 namespace GlobalWeather.Api.Lambda.Extensions;
 
 internal static class WeatherEndpoints
 {
+    private const string TagName = "Weather";
+
     public static WebApplication MapWeatherEndpoints(this WebApplication app)
     {
         return app
@@ -33,11 +36,41 @@ internal static class WeatherEndpoints
                     : Results.NotFound(result);
             })
             .WithName("get-cities-by-name")
-            .WithDescription("Returns a list of cities filtered by name")
-            .WithTags("Weather")
-            .Produces<ResultModel<List<CityModel>>>()
-            .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status404NotFound);
+            .Produces<ResultModel<List<CityModel>>>(StatusCodes.Status200OK, "application/json")
+            .Produces<ResultModel<List<CityModel>>>(StatusCodes.Status404NotFound, "application/json")
+            .WithOpenApi(x => new OpenApiOperation(x)
+            {
+                Description = "Returns a list of cities filtered by name",
+                Summary = "Get cities by name",
+                Tags =
+                [
+                    new OpenApiTag
+                    {
+                        Name = TagName
+                    }
+                ],
+                Parameters =
+                [
+                    new OpenApiParameter
+                    {
+                        Name = "name",
+                        Description = "City name",
+                        Required = true,
+                        In = ParameterLocation.Path,
+                        Examples = new Dictionary<string, OpenApiExample>
+                        {
+                            {
+                                "London",
+                                new OpenApiExample { Description = "Returns a list of cities with London name" }
+                            },
+                            {
+                                "New York",
+                                new OpenApiExample { Description = "Returns a list of cities with New York name" }
+                            }
+                        }
+                    },
+                ],
+            });
 
         app.MapGet("api/v1/weather/city/info", async (
                 [FromQuery(Name = "lat")] double latitude,
@@ -55,11 +88,37 @@ internal static class WeatherEndpoints
                     : Results.NotFound(result);
             })
             .WithName("get-city-information")
-            .WithDescription("Return city information filtered by coordinates")
-            .WithTags("Weather")
-            .Produces<ResultModel<CityModel>>()
-            .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status404NotFound);
+            .Produces<ResultModel<CityModel>>(StatusCodes.Status200OK, "application/json")
+            .Produces<ResultModel<CityModel>>(StatusCodes.Status404NotFound, "application/json")
+            .WithOpenApi(x => new OpenApiOperation(x)
+            {
+                Description = "Return city information filtered by coordinates",
+                Summary = "Get city information by coordinates",
+                Tags =
+                [
+                    new OpenApiTag
+                    {
+                        Name = TagName
+                    }
+                ],
+                Parameters =
+                [
+                    new OpenApiParameter
+                    {
+                        Name = "lat",
+                        Description = "City latitude coordinate",
+                        Required = true,
+                        In = ParameterLocation.Query,
+                    },
+                    new OpenApiParameter
+                    {
+                        Name = "lon",
+                        Description = "City longitude coordinate",
+                        Required = true,
+                        In = ParameterLocation.Query,
+                    }
+                ],
+            });
 
         app.MapGet("api/v1/weather/info", async (
                 [FromQuery(Name = "lat")] double latitude,
@@ -77,11 +136,37 @@ internal static class WeatherEndpoints
                     : Results.NotFound(result);
             })
             .WithName("get-weather-information")
-            .WithDescription("Returns weather information for specified city")
-            .WithTags("Weather")
-            .Produces<ResultModel<WeatherModel>>()
-            .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status404NotFound);
+            .Produces<ResultModel<WeatherModel>>(StatusCodes.Status200OK, "application/json")
+            .Produces<ResultModel<WeatherModel>>(StatusCodes.Status404NotFound, "application/json")
+            .WithOpenApi(x => new OpenApiOperation(x)
+            {
+                Description = "Returns weather information for specified city",
+                Summary = "Get weather information by coordinates",
+                Tags =
+                [
+                    new OpenApiTag
+                    {
+                        Name = TagName
+                    }
+                ],
+                Parameters =
+                [
+                    new OpenApiParameter
+                    {
+                        Name = "lat",
+                        Description = "City latitude coordinate",
+                        Required = true,
+                        In = ParameterLocation.Query,
+                    },
+                    new OpenApiParameter
+                    {
+                        Name = "lon",
+                        Description = "City longitude coordinate",
+                        Required = true,
+                        In = ParameterLocation.Query,
+                    }
+                ],
+            });
 
         return app;
     }
@@ -119,11 +204,21 @@ internal static class WeatherEndpoints
             })
             .RequireAuthorization()
             .WithName("add-city-to-user-favorites")
-            .WithDescription("Add city to user favorites and return city identifier")
-            .WithTags("Weather")
-            .Produces<ResultModel<string>>()
-            .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status404NotFound);
+            .Produces<ResultModel<string>>(StatusCodes.Status200OK, "application/json")
+            .Produces<ResultModel<string>>(StatusCodes.Status404NotFound, "application/json")
+            .WithOpenApi(x => new OpenApiOperation(x)
+            {
+                Description =
+                    "Add city to user favorites and return city identifier. This endpoint requires authorization, please use endpoints api/v1/user/login or api/v1/user/create to get JWT Token.",
+                Summary = "Add city to user favorites",
+                Tags =
+                [
+                    new OpenApiTag
+                    {
+                        Name = TagName
+                    }
+                ]
+            });
 
         return app;
     }
@@ -157,11 +252,31 @@ internal static class WeatherEndpoints
             })
             .RequireAuthorization()
             .WithName("remove-city-from-user-favorites")
-            .WithDescription("Remove city from user favorites and return city identifier")
-            .WithTags("Weather")
-            .Produces<ResultModel<string>>()
-            .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status404NotFound);
+            .Produces<ResultModel<string>>(StatusCodes.Status200OK, "application/json")
+            .Produces<ResultModel<string>>(StatusCodes.Status404NotFound, "application/json")
+            .WithOpenApi(x => new OpenApiOperation(x)
+            {
+                Description =
+                    "Remove city from user favorites. This endpoint requires authorization, please use endpoints api/v1/user/login or api/v1/user/create to get JWT Token.",
+                Summary = "Remove city from user favorites and return city identifier",
+                Tags =
+                [
+                    new OpenApiTag
+                    {
+                        Name = TagName
+                    }
+                ],
+                Parameters =
+                [
+                    new OpenApiParameter
+                    {
+                        Name = "cityId",
+                        Description = "City identifier",
+                        Required = true,
+                        In = ParameterLocation.Path
+                    }
+                ]
+            });
 
         return app;
     }
